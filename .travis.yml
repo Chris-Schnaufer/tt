@@ -1,0 +1,23 @@
+sudo: required
+language: python
+
+branches:
+  only:
+  - master
+  - develop
+  - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
+
+services:
+  - docker
+
+before_install:
+  - docker --version
+  - ls -l
+  - docker build -t chrisatua/extractors:test
+  - echo "$DOCKER_PASSWORD" | docker login -u "DOCKER_USERNAME" --password-stdin
+  - docker push chrisatua/extractors:test ./
+
+env:
+  global:
+  - secure: "UfEfBW52z1kVQ0VBqV1K7m5+ZjxsCo+GSO+hhnFz89VKvOP0UBoqeI5k/2fx15FnfgwpQLeyWdSlIKxSavLUIMy7Y6fGVPqshiksbAOJBETuOfm9JV0Y7OxM7lQW/m8tT03KVrrWAoIC9clQR0twqeFPCp7H+zDzJPpkdUXPj7tvKTtAYIS+gWD6+U+2StbcyqwVCnXrpuUjS1wdNkS5+b49S/NEVeAO6gu135G06PRC49mkl2S8LdS+68O5NLeH2a5plwcQvTqXNNk3Fi8oLWpK0us464XD3h7cE4cUg7uGMqGY1yIdAK8tH9WGuh1GbnRZ2nafB3HZFQ6FxDZejlV69H5WWRYI3LnWpllBa7FJivoA1MCB90zQPTUs9JvHkLc+0Uecxc8sw9XICYaj71ZXQm52I17TQWWCDxWgiuK5lNxaPX7aHCQNwLqDZkOukKcHbcN1p+KArs+YXulfxaTUlA5XkyjvzZPAceixXIOA2hrIvVtR/w6L0enTcsIe1SNHdp0+kzpfp0d47MkuSAreCiOY76UrV6aZ+WxhJ+inrST5Ea2hqzDQ6yeYgRIvMwJYvly4B0j7cCG55Xsnj0Bx3xsPNhuiG212Qg9hw9Spe1lYnS08PheBFRRkL4klph0H/cau/78zitmHXSm2OnKoTHrqLVdN89VyHpMhmWw="
+  - secure: "h2ONdaf6M6CHLcIrrAUrMSzTKxk6dJA/XPnEkRr0nnZ7jalogBCcK/EBo4kitlRRD8uivKxJ/9i3+YupsPseWjg0jOmMI+qgtEMePvpUMmD3I2lwu1NEfP99EpiHpcYvahxfNTWCSRWj+udHdR5A2sAUZo1YLV9yeeVnLspGmQy1/3SBuaRsm77zG7je4MkWQa0Fo8ksXbblOR8dGnOoCHnXi0/Q0saVwO+t5yuwm0wgkmdoUDcucyb2WZl9FFiMBikPTtJSkGBvrNgPCVLAqvyiPYFV7pv8eSSbRhbr5VfCycm3KesF2xS5MJyG77VQQ9aLzg3Ai4x2stZckJVwFI0QnQtl9uhy7hWrS1pmPyILpoGc38orP48uH5ygla5LRfwOQqRTFCqjH0LOkUu6Q4n9s/9sazqWj707KfrEBf+HI+gKKZLeEpASGs3wOaEXf5ju+p7q8UGZy2AoJAItrZLoIxWK++TJN4weOyAVpI65mvuKqJpa3mslyOPFBMqxKaQyn5kESGvHuHyLrznakHjlgzjkK3kouYZ6gm/d34YQxakravBtU2ILBteFU4V4/NO412MIFlzjjtvSkR4IpC+j1pBoDMP2otR9WzVvNwY4a8SVaSb6lP2ZLPqx1PmpNNossgJ0LNHHBSR3p0ss7S9mNELEQMbDCZYF9+rfo2A="
