@@ -4,6 +4,8 @@ MAINTAINER Max Burnette <mburnet2@illinois.edu>
 # Install any programs needed
 RUN useradd -u 49044 extractor
 
+RUN pip install --upgrade pip
+
 RUN pip install terraref-stereo-rgb \
                 opencv-python \
                 Pillow \
