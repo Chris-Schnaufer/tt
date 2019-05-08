@@ -1,5 +1,7 @@
 sudo: required
 language: python
+python: 
+  - 2.7
 
 branches:
   only:
@@ -13,9 +15,9 @@ services:
 before_install:
   - docker --version
   - ls -l
-  - docker build -t chrisatua/extractors:test
+  - docker build -t chrisatua/extractors:test ./
   - echo "$DOCKER_PASSWORD" | docker login -u "DOCKER_USERNAME" --password-stdin
-  - docker push chrisatua/extractors:test ./
+  - docker push chrisatua/extractors:test
 
 env:
   global:
