@@ -75,9 +75,7 @@ script:
 
 #after_success:
 
-#before_deploy:
-
-deploy:
+before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push chrisatua/extractors:test
 
