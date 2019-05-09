@@ -43,7 +43,7 @@ before_install:
 install:
   - docker-compose -p clowder -f test/docker-compose.yml up -d
   # Setup the clowder account
-  - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/signup?email=test%40example.com"
+  - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "{{DOCKER_HOST_URI}}/signup?email=test%40example.com"
   - docker logs pipeline_clowder_1 2>&1 | grep -A 10 "test@example\.com" | grep "to complete your registration" > reg.txt
   - URI=`sed -r 's/.*href="(.+)">.*/\1/' reg.txt`
   - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$URI?firstName=test&lastName=test&password.password1=testPassword&password.password2=testPassword&agreementAcknowledged=true"
