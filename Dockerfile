@@ -2,23 +2,39 @@ FROM terraref/terrautils:1.4
 MAINTAINER Max Burnette <mburnet2@illinois.edu>
 
 # Install any programs needed
-RUN useradd -u 49044 extractor
+RUN useradd -u 49044 extractor \
+    && mkdir /home/extractor \
+    && mkdir /home/extractor/sites
 
-RUN pip install --upgrade pip
+RUN chown -R extractor /home/extractor \
+    && chgrp -R extractor /home/extractor 
+
+# install and upgrade packages
+RUN pip install --upgrade pip 
 
 RUN pip install terraref-stereo-rgb \
                 opencv-python \
                 Pillow \
-                scikit-image
-RUN apt update && apt install -y libsm6 \
-                                libxext6 \
-                                libxrender-dev \
-                                python-matplotlib \
-                                python-numpy \
-                                python-pil \
-                                python-scipy \
-                                build-essential \
-                                cython
+                scikit-image \
+                gdal
+
+RUN pip install -U numpy
+
+RUN apt update && \
+    apt install -y libsm6 \
+                   libxext6 \
+                   libxrender-dev \
+                   python-matplotlib \
+                   python-numpy \
+                   python-pil \
+                   python-scipy \
+                   build-essential \
+                   cython \
+                   imagemagick \
+                   gdal-bin \
+                   libgdal-dev
+
+COPY terrautils/*.py /home/extractor/terrautils/
 
 # command to run when starting docker
 COPY entrypoint.sh extractor_info.json *.py /home/extractor/
@@ -34,4 +50,5 @@ CMD ["extractor"]
 ENV RABBITMQ_EXCHANGE="terra" \
     RABBITMQ_VHOST="%2F" \
     RABBITMQ_QUEUE="terra.stereo-rgb.rgbmask" \
-    MAIN_SCRIPT="terra_rgbmask.py"
+    MAIN_SCRIPT="terra_rgbmask.py" \
+    PYTHONPATH="${PYTHONPATH}:/home/extractor/terrautils"

@@ -1,18 +1,24 @@
 import os
-import cv2
 import numpy as np
+import tempfile
+import shutil
+
 from osgeo import gdal
 from PIL import Image
-from skimage import morphology
 
 from pyclowder.utils import CheckMessage
 from pyclowder.datasets import download_metadata, upload_metadata, remove_metadata
-from terrautils.metadata import get_extractor_metadata, get_terraref_metadata, \
-    get_season_and_experiment
-from terrautils.extractors import TerrarefExtractor, is_latest_file, check_file_in_dataset, load_json_file, \
-    build_metadata, build_dataset_hierarchy_crawl, upload_to_dataset, file_exists, contains_required_files
-from terrautils.formats import create_geotiff, create_image, compress_geotiff
-from terrautils.spatial import geojson_to_tuples, geojson_to_tuples_betydb
+from terrautils.metadata import get_extractor_metadata, get_terraref_metadata
+from terrautils.extractors import TerrarefExtractor, is_latest_file, check_file_in_dataset, \
+    build_metadata, upload_to_dataset, file_exists, contains_required_files, \
+    confirm_clowder_info, timestamp_to_terraref
+from terrautils.formats import create_geotiff, compress_geotiff
+from terrautils.spatial import geojson_to_tuples
+from terrautils.imagefile import file_is_image_type, image_get_geobounds, get_epsg
+
+from skimage import morphology
+
+import cv2
 
 
 SATURATE_THRESHOLD = 245
@@ -213,11 +219,62 @@ def gen_cc_enhanced(input_path, kernelSize=3):
 
     return ratio, rgbMask
 
+def find_terraref_files(resource):
+    """Returns the left, and right image file names
+    Args:
+        resource(dict): the resource associated with the process request
+    Return:
+        A tuple containing the left file name followed by the right filename
+    Exception:
+        A ValueError is raised if all the fields aren't found
+    """
+    img_left, img_right = None, None
+
+    for fname in resource['local_paths']:
+        if fname.endswith('_left.tif'):
+            img_left = fname
+        elif fname.endswith('_right.tif'):
+            img_right = fname
+
+    if None in [img_left, img_right]:
+        raise ValueError("could not locate all files in processing")
+
+    return (img_left, img_right)
+
+def find_image_files(identify_binary, resource, file_metadata_ending):
+    """Returns the left, and right image file names
+    Args:
+        identify_binary(str): path to the executable which will return a MIME type on an image file
+        resource(dict): the resource associated with the process request
+        file_metadata_ending(str): the filename ending identifying an associated metadata file
+    Return:
+        A tuple of found image files
+    """
+    return_files = []
+
+    for fname in resource['local_paths']:
+        if file_is_image_type(identify_binary, fname, fname + file_metadata_ending):
+            return_files.append(fname)
+
+    return tuple(return_files)
 
 def add_local_arguments(parser):
-    # add any additional arguments to parser
+    """ Add any additional arguments to parser for rgbEnhancementExtractor class
+    Args:
+        parse: the command argument parser
+    """
+    # For only processing the TERRA REF left image
     parser.add_argument('--left', type=bool, default=os.getenv('LEFT_ONLY', True),
                         help="only generate a mask for the left image")
+
+    # Name of an image, or file, MIME type app
+    identify_binary = os.getenv('IDENTIFY_BINARY', '/usr/bin/identify')
+
+    # Command line override of an image or file MIME type app
+    parser.add_argument('--identify-binary', nargs='?', dest='identify_binary',
+                             default=identify_binary,
+                             help='Identify executable used to for image type capture ' +
+                             '(default=' + identify_binary + ')')
 
 class rgbEnhancementExtractor(TerrarefExtractor):
 
@@ -232,6 +289,28 @@ class rgbEnhancementExtractor(TerrarefExtractor):
         # assign local arguments
         self.leftonly = self.args.left
 
+    def get_maskfilename_bounds(self, file_name, datestamp):
+        """Determines the name of the masking file and loads the boundaries of the file
+        Args:
+            file_name(str): path of the file to create a mask from
+            datestamp(str): the date to use when creating file paths
+        Return:
+        """
+        mask_name, bounds = (None, None)
+
+        if not self.get_terraref_metadata is None:
+            key = 'left' if file_name.endswith('_left.tif') else 'right'
+            mask_name = self.sensors.create_sensor_path(datestamp, opts=[key])
+            bounds = geojson_to_tuples(self.get_terraref_metadata['spatial_metadata'][key]['bounding_box'])
+        else:
+            mask_name = self.sensors.create_sensor_path(datestamp)
+            bounds = image_get_geobounds(file_name)
+            bounds_len = len(bounds)
+            if bounds_len <= 0 or bounds[0] == np.nan:
+                bounds = None
+
+        return (mask_name, bounds)
+
     def check_message(self, connector, host, secret_key, resource, parameters):
         if "rulechecked" in parameters and parameters["rulechecked"]:
             return CheckMessage.download
@@ -242,110 +321,159 @@ class rgbEnhancementExtractor(TerrarefExtractor):
             self.log_skip(resource, "not latest file")
             return CheckMessage.ignore
 
-        # Check for a left and right TIF file - skip if not found
-        if not contains_required_files(resource, ['_left.tif', '_right.tif']):
-            self.log_skip(resource, "missing required files")
-            return CheckMessage.ignore
-
         # Check metadata to verify we have what we need
         md = download_metadata(connector, host, secret_key, resource['id'])
         if get_terraref_metadata(md):
-            if get_extractor_metadata(md, self.extractor_info['name'], self.extractor_info['version']):
+            # Check for a left and right TIF file - skip if not found
+            # If we're only processing the left files, don't check for the right file
+            needed_files = ['_left.tif']
+            if not self.leftonly:
+                needed_files.append('_right.tif')
+            if not contains_required_files(resource, needed_files):
+                self.log_skip(resource, "missing required files")
+                return CheckMessage.ignore
+
+            if get_extractor_metadata(md, self.extractor_info['name'],
+                                      self.extractor_info['version']):
                 # Make sure outputs properly exist
                 timestamp = resource['dataset_info']['name'].split(" - ")[1]
                 left_mask_tiff = self.sensors.create_sensor_path(timestamp, opts=['left'])
                 right_mask_tiff = self.sensors.create_sensor_path(timestamp, opts=['right'])
-                if (self.leftonly and file_exists(left_mask_tiff)) or (
-                            not self.leftonly and file_exists(left_mask_tiff) and file_exists(right_mask_tiff)):
-                    self.log_skip(resource, "metadata v%s and outputs already exist" % self.extractor_info['version'])
+                if (self.leftonly and file_exists(left_mask_tiff)) or \
+                   (not (file_exists(left_mask_tiff) and file_exists(right_mask_tiff))):
+                    self.log_skip(resource, "metadata v%s and outputs already exist" % \
+                                  self.extractor_info['version'])
                     return CheckMessage.ignore
-            # Have TERRA-REF metadata, but not any from this extractor
-            return CheckMessage.download
-        else:
-            self.log_skip(resource, "no terraref metadata found")
+        # Check for other images to create a mask on
+        elif not contains_required_files(resource, ['.tif']):
+            self.log_skip(resource, "missing required tiff file")
             return CheckMessage.ignore
 
+        # Have TERRA-REF metadata, but not any from this extractor
+        return CheckMessage.download
+
     def process_message(self, connector, host, secret_key, resource, parameters):
+
+        super(rgbEnhancementExtractor, self).process_message(connector, host, secret_key,
+                                                             resource, parameters)
+
         self.start_message(resource)
 
         # Get left/right files and metadata
-        img_left, img_right, metadata = None, None, None
-        for fname in resource['local_paths']:
-            if fname.endswith('_dataset_metadata.json'):
-                all_dsmd = load_json_file(fname)
-                terra_md_full = get_terraref_metadata(all_dsmd, 'stereoTop')
-            elif fname.endswith('_left.tif'):
-                img_left = fname
-            elif fname.endswith('_right.tif'):
-                img_right = fname
-        if None in [img_left, img_right, terra_md_full]:
-            raise ValueError("could not locate all files & metadata in processing")
+        process_files = []
+        if not self.get_terraref_metadata is None:
+            process_files = find_terraref_files(resource)
+        else:
+            process_files = find_image_files(self.args.identify_binary, resource,
+                                             self.file_infodata_file_ending)
 
-        timestamp = resource['dataset_info']['name'].split(" - ")[1]
+        # Get the best username, password, and space
+        old_un, old_pw, old_space = (self.clowder_user, self.clowder_pass, self.clowderspace)
+        self.clowder_user, self.clowder_pass, self.clowderspace = self.get_clowder_context()
+
+        # Ensure that the clowder information is valid
+        if not confirm_clowder_info(host, secret_key, self.clowderspace, self.clowder_user,
+                                    self.clowder_pass):
+            self.log_error(resource, "Clowder configuration is invalid. Not processing " +\
+                                     "request")
+            self.clowder_user, self.clowder_pass, self.clowderspace = (old_un, old_pw, old_space)
+            self.end_message(resource)
+            return
+
+        # Change the base path of files to include the user by tweaking the sensor's value
+        sensor_old_base = None
+        if self.get_terraref_metadata is None:
+            _, new_base = self.get_username_with_base_path(host, secret_key, resource['id'],
+                                                           self.sensors.base)
+            sensor_old_base = self.sensors.base
+            self.sensors.base = new_base
+
+        # Prepare for processing files
+        timestamp = timestamp_to_terraref(self.find_timestamp(resource['dataset_info']['name']))
         target_dsid = resource['id']
-
-        left_rgb_mask_tiff = self.sensors.create_sensor_path(timestamp, opts=['left'])
-        right_rgb_mask_tiff = self.sensors.create_sensor_path(timestamp, opts=['right'])
         uploaded_file_ids = []
-        right_ratio, left_ratio = 0, 0
+        ratios = []
 
-        left_bounds = geojson_to_tuples(terra_md_full['spatial_metadata']['left']['bounding_box'])
-        right_bounds = geojson_to_tuples(terra_md_full['spatial_metadata']['right']['bounding_box'])
+        try:
+            for one_file in process_files:
 
-        if not file_exists(left_rgb_mask_tiff) or self.overwrite:
-            self.log_info(resource, "creating %s" % left_rgb_mask_tiff)
+                mask_source = one_file
 
-            left_ratio, left_rgb = gen_cc_enhanced(img_left)
-            # Bands must be reordered to avoid swapping R and B
-            left_rgb = cv2.cvtColor(left_rgb, cv2.COLOR_BGR2RGB)
+                # Make sure the source image is in the correct EPSG space
+                epsg = get_epsg(one_file)
+                if epsg != self.default_epsg:
+                    self.log_info(resource, "Reprojecting from " + str(epsg) +
+                                  " to default " + str(self.default_epsg))
+                    _, tmp_name = tempfile.mkstemp()
+                    src = gdal.Open(one_file)
+                    gdal.Warp(tmp_name, src, dstSRS='EPSG:'+str(self.default_epsg))
+                    mask_source = tmp_name
 
-            create_geotiff(left_rgb, left_bounds, left_rgb_mask_tiff, None, False, self.extractor_info, terra_md_full)
-            compress_geotiff(left_rgb_mask_tiff)
-            self.created += 1
-            self.bytes += os.path.getsize(left_rgb_mask_tiff)
+                # Get the bounds of the image to see if we can process it. Also get the mask filename
+                rgb_mask_tif, bounds = self.get_maskfilename_bounds(mask_source, timestamp)
 
-        found_in_dest = check_file_in_dataset(connector, host, secret_key, target_dsid, left_rgb_mask_tiff,
-                                              remove=self.overwrite)
-        if not found_in_dest:
-            self.log_info(resource, "uploading %s" % left_rgb_mask_tiff)
-            fileid = upload_to_dataset(connector, host, self.clowder_user, self.clowder_pass, target_dsid,
-                                       left_rgb_mask_tiff)
-            uploaded_file_ids.append(host + ("" if host.endswith("/") else "/") + "files/" + fileid)
+                if bounds is None:
+                    self.log_skip(resource, "Skipping non-georeferenced image: " + \
+                                                                    os.path.basename(one_file))
+                    if mask_source != one_file:
+                        os.remove(mask_source)
+                    continue
 
+                if not file_exists(rgb_mask_tif) or self.overwrite:
+                    self.log_info(resource, "creating %s" % rgb_mask_tif)
 
-        if not self.leftonly:
-            if not file_exists(right_rgb_mask_tiff) or self.overwrite:
+                    mask_ratio, mask_rgb = gen_cc_enhanced(mask_source)
+                    ratios.append(mask_ratio)
 
+                    # Bands must be reordered to avoid swapping R and B
+                    mask_rgb = cv2.cvtColor(mask_rgb, cv2.COLOR_BGR2RGB)
 
-                right_ratio, right_rgb = gen_cc_enhanced(img_right)
+                    create_geotiff(mask_rgb, bounds, rgb_mask_tif, None, False, self.extractor_info,
+                                   self.get_terraref_metadata)
+                    compress_geotiff(rgb_mask_tif)
 
-                create_geotiff(right_rgb, right_bounds, right_rgb_mask_tiff, None, False, self.extractor_info, terra_md_full)
-                compress_geotiff(right_rgb_mask_tiff)
-                self.created += 1
-                self.bytes += os.path.getsize(right_rgb_mask_tiff)
+                    # Remove any temporary file
+                    if mask_source != one_file:
+                        os.remove(mask_source)
 
-            found_in_dest = check_file_in_dataset(connector, host, secret_key, target_dsid, right_rgb_mask_tiff,
-                                                  remove=self.overwrite)
-            if not found_in_dest:
-                self.log_info(resource, "uploading %s" % right_rgb_mask_tiff)
-                fileid = upload_to_dataset(connector, host, self.clowder_user, self.clowder_pass, target_dsid,
-                                           right_rgb_mask_tiff)
-                uploaded_file_ids.append(host + ("" if host.endswith("/") else "/") + "files/" + fileid)
+                    self.created += 1
+                    self.bytes += os.path.getsize(rgb_mask_tif)
 
+                found_in_dest = check_file_in_dataset(connector, host, secret_key, target_dsid,
+                                                      rgb_mask_tif, remove=self.overwrite)
+                if not found_in_dest:
+                    self.log_info(resource, "uploading %s" % rgb_mask_tif)
+                    fileid = upload_to_dataset(connector, host, self.clowder_user, self.clowder_pass,
+                                               target_dsid, rgb_mask_tif)
+                    uploaded_file_ids.append(host + ("" if host.endswith("/") else "/") +
+                                             "files/" + fileid)
 
-        # Tell Clowder this is completed so subsequent file updates don't daisy-chain
-        md = {
-            "files_created": uploaded_file_ids,
-            "left_mask_ratio": left_ratio
-        }
-        if not self.leftonly:
-            md["right_mask_ratio"] = right_ratio
-        extractor_md = build_metadata(host, self.extractor_info, target_dsid, md, 'dataset')
-        self.log_info(resource, "uploading extractor metadata to Lv1 dataset")
-        remove_metadata(connector, host, secret_key, resource['id'], self.extractor_info['name'])
-        upload_metadata(connector, host, secret_key, resource['id'], extractor_md)
+            # Tell Clowder this is completed so subsequent file updates don't daisy-chain
+            if not self.get_terraref_metadata is None:
+                ratios_len = len(ratios)
+                left_ratio = (ratios[0] if ratios_len > 0 else None)
+                right_ratio = (ratios[1] if ratios_len > 1 else None)
+                md = {
+                    "files_created": uploaded_file_ids
+                }
+                if not left_ratio is None:
+                    md["left_mask_ratio"] = left_ratio
+                if not self.leftonly and not right_ratio is None:
+                    md["right_mask_ratio"] = right_ratio
+                extractor_md = build_metadata(host, self.extractor_info, target_dsid, md, 'dataset')
+                self.log_info(resource, "uploading extractor metadata to Lv1 dataset")
+                remove_metadata(connector, host, secret_key, resource['id'],
+                                self.extractor_info['name'])
+                upload_metadata(connector, host, secret_key, resource['id'], extractor_md)
 
-        self.end_message(resource)
+        finally:
+            # Signal end of processing message and restore changed variables. Be sure to restore
+            # changed variables above with early returns
+            if not sensor_old_base is None:
+                self.sensors.base = sensor_old_base
+
+            self.clowder_user, self.clowder_pass, self.clowderspace = (old_un, old_pw, old_space)
+            self.end_message(resource)
 
 
 if __name__ == "__main__":
