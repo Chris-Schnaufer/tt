@@ -54,6 +54,9 @@ install:
   - echo "USER ID:$USER_ID"
   - export API_KEY=`curl -X POST -v -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/api/users/keys?name=testingkey" -H "$USER_ID" | sed -r 's/.*"key":"(.+)".*/\1/'`
   - echo "API KEY:$API_KEY"
+  # Pull down the testing files
+  #- apt install -y npm
+  #- npm install --save box-node-sdk
 
 # Setup the clowder environment
 before_script:
