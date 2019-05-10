@@ -21,7 +21,9 @@ do
     echo "Sleep before checking container: ${COUNT}"
     ((COUNT=COUNT+1))
     sleep "${SLEEP_SECONDS}"
-    RES=`docker logs "${CLOWDER_NAME}" 2>&1 | grep "Listening for HTTP on /0.0.0.0:9000"`
+    echo 'docker logs "${CLOWDER_NAME}" 2>&1 | grep "Listening for HTTP on /0.0.0.0:9000"'
+    docker logs "${CLOWDER_NAME}" 2>&1 > clog.txt
+    RES=`grep "Listening for HTTP on /0.0.0.0:9000" clog.txt`
     if [[ -n "${RES}" ]]; then break; fi
     echo "Clowder not ready yet"
     if [[ "${COUNT}" == "10000" ]]; then
