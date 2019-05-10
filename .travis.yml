@@ -28,13 +28,7 @@ env:
 before_install:
   - docker --version
   - ls -l
-  - echo $DOCKER_COMPOSE_VERSION
-  - sudo rm -f /usr/local/bin/docker-compose   # Update docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - ls -l docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - docker-compose --version
+  - ./test/update_docker_compose.sh
 
 # Start up the test bed containers and copy files from other locations as needed
 install:
