@@ -29,11 +29,20 @@ before_install:
   - docker --version
   - ls -l
   - ./test/update_docker_compose.sh
+  - echo "Attempting to update to docker-compose version:$DOCKER_COMPOSE_VERSION"
+  - sudo rm -f /usr/local/bin/docker-compose   # Update docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - ls -l docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose --version
 
 # Start up the test bed containers and copy files from other locations as needed
 install:
   - docker-compose -p clowder -f test/docker-compose.yml up -d
+  - docker ps
   # Setup the clowder account
+  - echo "Docker URL:$DOCKER_HOST_URI"
   - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/signup?email=test%40example.com"
   - docker logs pipeline_clowder_1 2>&1 | grep -A 10 "test@example\.com" | grep "to complete your registration" > reg.txt
   - URI=`sed -r 's/.*href="(.+)">.*/\1/' reg.txt`
