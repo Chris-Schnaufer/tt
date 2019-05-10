@@ -49,7 +49,7 @@ install:
   - URI=`sed -r 's/.*href="(.+)">.*/\1/' reg.txt`
   - echo "URI:$URI"
   - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$URI?firstName=test&lastName=test&password.password1=testPassword&password.password2=testPassword&agreementAcknowledged=true"
-  - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/authenticate/userpass?username=foo3%40example.com&password=testPassword" -D headers.txt
+  - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/authenticate/userpass?username=test%40example.com&password=testPassword" -D headers.txt
   - USER_ID=`grep 'Set-Cookie:id' headers.txt | sed -r 's/Set-(.+);.*;.*/\1/'`
   - echo "USER ID:$USER_ID"
   - export API_KEY=`curl -X POST -v -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/api/users/keys?name=testingkey" -H "$USER_ID" | sed -r 's/.*"key":"(.+)".*/\1/'`
