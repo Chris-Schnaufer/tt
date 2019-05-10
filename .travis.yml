@@ -4,7 +4,7 @@ sudo: required
 # python environment and python version
 language: python
 python: 
-  - "2.7"
+  - "3.0"
 
 # What sources to auto build
 branches:
@@ -35,6 +35,7 @@ before_install:
   - ls -l docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
+  - pip3 install boxsdk
 
 # Start up the test bed containers and copy files from other locations as needed
 install:
@@ -55,12 +56,10 @@ install:
   - export API_KEY=`curl -X POST -v -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/api/users/keys?name=testingkey" -H "$USER_ID" | sed -r 's/.*"key":"(.+)".*/\1/'`
   - echo "API KEY:$API_KEY"
   # Pull down the testing files
-  #- apt install -y npm
-  #- npm install --save box-node-sdk
+  - ./test/fetch_box_archives.py "$TEST_COMPARE_ARCHIVE" "$TEST_SOURCE_ARCHIVE"
 
 # Setup the clowder environment
 before_script:
-  - echo "API KEY:$API_KEY"
   - export SPACE_ID=`curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d '{"name":"test_space","description":"Test results"}' "$DOCKER_HOST_URI/api/spaces?key=$API_KEY" | sed -r 's/.*id\"\:\"(.+)\".*/\1/'`
   - echo "SPACE_ID:$SPACE_ID"
   - export DATASET_ID=`curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d '{"name":"$TEST_DATASET_NAME"}' "$DOCKER_HOST_URI/api/datasets/createempty?key=$API_KEY" | sed -r 's/.*id\"\:\"(.+)\".*/\1/'`
@@ -68,6 +67,7 @@ before_script:
   - docker build -t chrisatua/extractors:test ./
   - docker run --network clowder_clowder -e 'RABBITMQ_URI=amqp://rabbitmq/%2F' -e 'RABBITMQ_EXCHANGE=terra' -d $CONTAINER_NAME
   - export EXTRACTOR_NAME=`cat extractor_info.json | grep '\"name\"' | sed -r 's/\"name\"\:.*\"(.+)\",/\1/'`
+  - echo "$EXTRACTOR_NAME"
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
   - ./test/upload_data.py                     # Put the files into clowder
   - ./test/register_extractor.py ./extractor_info.json
