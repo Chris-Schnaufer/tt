@@ -40,7 +40,7 @@ before_install:
 # Start up the test bed containers and copy files from other locations as needed
 install:
   - docker-compose -p clowder -f test/docker-compose.yml up -d
-  - docker ps
+  - docker ps -a
   # Setup the clowder account
   - echo "Docker URL:$DOCKER_HOST_URI"
   - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/signup?email=test%40example.com"
