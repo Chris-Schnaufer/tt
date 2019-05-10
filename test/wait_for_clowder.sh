@@ -23,7 +23,9 @@ do
     sleep "${SLEEP_SECONDS}"
     echo 'docker logs "${CLOWDER_NAME}" 2>&1 | grep "Listening for HTTP on /0.0.0.0:9000"'
     docker logs "${CLOWDER_NAME}" 2>&1 > clog.txt
+    echo "Post logs"
     grep "Listening for HTTP on /0.0.0.0:9000" clog.txt
+    echo "Post grep"
     RES=`grep "Listening for HTTP on /0.0.0.0:9000" clog.txt`
     if [[ -n "${RES}" ]]; then break; fi
     echo "Clowder not ready yet"
