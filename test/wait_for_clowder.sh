@@ -20,12 +20,12 @@ for (( ; ; ))
 do
     echo "Sleep before checking container: ${COUNT}"
     ((COUNT=COUNT+1))
-    sleep ${SLEEP_SECONDS}
-    RES=`docker logs $CLOWDER_NAME 2>&1 | grep "Listening for HTTP on /0.0.0.0:9000"`
-    if [[ -n "$RES" ]]; then break; fi
+    sleep "${SLEEP_SECONDS}"
+    RES=`docker logs "${CLOWDER_NAME}" 2>&1 | grep "Listening for HTTP on /0.0.0.0:9000"`
+    if [[ -n "${RES}" ]]; then break; fi
     echo "Clowder not ready yet"
-    if [[ "$COUNT" == "10000" ]]; then
-        echo "Exceeding wait time count. Assuming clowder won't ever be ready"
+    if [[ "${COUNT}" == "10000" ]]; then
+        echo "Exceeding wait time limit. Assuming clowder won't ever be ready"
         exit 2
     fi
 done
