@@ -28,7 +28,6 @@ env:
 before_install:
   - docker --version
   - ls -l
-  - ./test/update_docker_compose.sh
   - echo "Attempting to update to docker-compose version:$DOCKER_COMPOSE_VERSION"
   - sudo rm -f /usr/local/bin/docker-compose   # Update docker-compose
   - curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-`uname -s`-`uname -m` > docker-compose
