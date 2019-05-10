@@ -41,11 +41,11 @@ install:
   - docker-compose -p clowder -f test/docker-compose.yml up -d
   - docker ps -a
   - docker inspect clowder_clowder_1
-  - ./test/wait_for_clowder.sh
+  - ./test/wait_for_clowder.sh clowder_clowder_1
   # Setup the clowder account
   - echo "Docker URL:$DOCKER_HOST_URI"
   - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/signup?email=test%40example.com"
-  - docker logs pipeline_clowder_1 2>&1 | grep -A 10 "test@example\.com" | grep "to complete your registration" > reg.txt
+  - ./test/wait_for_registration.sh clowder_1
   - URI=`sed -r 's/.*href="(.+)">.*/\1/' reg.txt`
   - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$URI?firstName=test&lastName=test&password.password1=testPassword&password.password2=testPassword&agreementAcknowledged=true"
   - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/authenticate/userpass?username=foo3%40example.com&password=testPassword" -D headers.txt
