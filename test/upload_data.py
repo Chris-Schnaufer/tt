@@ -24,7 +24,7 @@ print("API KEY: "+key)
 print("DATASET ID: "+dataset)
 print("CLOWDER URI: "+dataset)
 
-url = "%sapi/uploadToDataset/%s?extract=false&key=%s" % (docker_uri, dataset, key)
+url = "%s/api/uploadToDataset/%s?extract=false&key=%s" % (docker_uri, dataset, key)
 headers = {"Content-Type": "multipart/form-data", "accept": "application/json"}
 
 print ("URL: "+url)
