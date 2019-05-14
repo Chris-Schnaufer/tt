@@ -36,6 +36,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
   - pip3 install boxsdk
+  - openssl aes-256-cbc -K $encrypted_53c1c3cd3f28_key -iv $encrypted_53c1c3cd3f28_iv -in junk.enc -out ./junk -d
 
 # Start up the test bed containers and copy files from other locations as needed
 install:
@@ -56,7 +57,9 @@ install:
   - export API_KEY=`curl -X POST -v -H "Content-Type:application/x-www-form-urlencoded" "$DOCKER_HOST_URI/api/users/keys?name=testingkey" -H "$USER_ID" | sed -r 's/.*"key":"(.+)".*/\1/'`
   - echo "API KEY:$API_KEY"
   # Pull down the testing files
-  - ./test/fetch_box_archives.py "$TEST_COMPARE_ARCHIVE" "$TEST_SOURCE_ARCHIVE"
+  #- ./test/fetch_box_archives.py "$TEST_COMPARE_ARCHIVE" "$TEST_SOURCE_ARCHIVE"
+  - echo "@get rgbmask_test_data.tar" | ssh -i ./junk -b -
+  - echo "@get rgbmask_results.tar" | ssh -i ./junk -b -
 
 # Setup the clowder environment
 before_script:
