@@ -23,7 +23,8 @@ env:
   global:
   - secure: "R8Ngn7lFa2itiwZa/Rp4K2sqFsLv2iAyDoOZjmE92fHgqSLYvi4cKXjSOzPIf/CInQhLDkFSKbgTUK72eEfoRhMezIkX/qJG1MUDYT6XhyNlz3XF3mdSmtxEVzgZ1uIsUS1mGqEYvU+sIGxFETO0H/xR6SzAE4EX2B8AE2x4kKa+BnIayT2SaRI36N0TZ2pET4C4Qy4krBvihV2NmixF6rzjwJ6F3jKq50O0S/dhI8+seFInqstJB5FToQkT4/LnNOnqc+pClv0HdL3ZowMOqWiostV0j97Jm71n9zFAJl4GAthE4ZhAGfmohMb3J/g17rtikNFOxAIjTBSWGJg1oSWIg8vD222AVSPjzv9Wa8CX/LauZXRbZ4CshI0Tfz1U14UfUwxGdsiP2zcYMU/hBkcV4coiedtip9UPg9z55dluO9DLolmu2jFoWa9FUhvhbAr4TjveLngaT3SN+N0MzkeHG+ITHM4KyyfFK/jDcsFLTsbeMpZbioh74AhLswsKrAxVAjeAZXynG4+OMTdoFNpIGkMJ7u46lj+xw2TsVRcEX4HBLuExL78xRfL25ZCbNLqZsn2iQ5BbKKsFtMWeDogyq06uGv0GwNjtt303dM18QSIncIsUDrGG4G07S0v0twu+a2tThNtPmFw4GqmmNDOIe68SiuMYYIxWuI+ahGA="
   - secure: "nSSkp37NCAvwlj1WUKIqm8alH+yPsNA6efbGAYO1weclSr+ZK/QWoSp3oMEM0QvWHska5X4Xosdn3G8rRbSzaD/ZkFnkOVpyfWjJlPZbgKRZn07N0koRnq2sNp3HKYlc+2lOd8iIkFq52AcJQOhdVo0DsFlPwrFPj50zUCyML9vObvJa4WSzA7esTD4xArUpbajkYYJvTPViM/JlY8h5I0//lm1oauIj6c+w7vfTTEEpXoohp0QBgs6F54WjyQG/Pn5ARedDv1+F7FXutaFvcaHvMgHB44ft87QP0mGDcdjMYnAgzfgvSVykqzzXgR0a7qyUfHBeVvUbSxT0aRG8pgynvHKrfO12nyv6VyTPUAyv4PYPt0wcsZfyDYQgRvz7fH8+ZDK2XnyTdF32xSTbMmTepAIhrdBbvoecBuogBUOG/yjuUYF1CR7xxWU6q5vYSNh33U1zIM/3skcdeh+tiqbCP6TguBPbPE9jYqI0O9EVl9XE9btuVaN0VS1ELBJW22wW8rDRqQIt+onWwLSf1iS2HyU+Qj3TL3rIz3/i8oxPrLAMwpswGxI4bvXYz27LVfr6DDF8w5s0+tDmC0uzS3L7ZmhlokoVOUWFu5u4ETg69eEA/UXiVppnZArZ9Efg3uiobuFZIbaGXjCNn1EmX5GWu6eddaHgYmiwRXwoyQM="
-  - secure: "nK682kygWWelkAwmGGqTRyS+e/8MgKYrGXrxn82eAZRwgpg7Gy0edYciF+FbAt+vNtIdnIlOGGJazihf+gnNriFu5dxZiiO7/0KsYwP6/scNbiBA4DGpgIZagfXjUU5myHvn1jfCil01NrdHj5cnocm2GA7oXdmBC1XLl9TEdxp5j1Bnei1IVylGmIpR4WHEEslqoHL0GCIetJjOyULBxv1+gLBZRCJcvvro8Yylk02yXbmyLX9iDgfNALUeu/mkxfdr+dXdIQN/TGjhTQVTtgwH4QaDH9OZzbwAwSK4OiTbZUSDW4cu8ATDY0lnVKEU1/dDKh2/pbexR7xSpshZ7NsaXtNPGgsAN2wdHq2Fqx+9wAN8o8IlzYFt6vd89WvD4eIdnG93D2lSrtNen6LWDivaSzmzt6Bn2Ac7giR9p1aN+0aCVaCAVR2UlK0giXEB3ZzE6uaCt/mmOWa218Nj4TiRFVZZ3Leh9W+TJkAS5QqGYnad0WGziXrgFJx0WHCwsVXKdwuayovYcXKDvbXK5Oww9WVSIa44XGKVitSc52+k45K31Lyn8Ix4XDndidtPP3qkfWUiEKzq/90Z3kdjjHEOcBcxTCIzOjwA1b0TWbOTgXRv/kRVXJBk/GvQ1zpoBy1mg+wJg+gto5uVkjBOaSdw4itEg0dAijUj4/I1tvY="
+  #- secure: "nK682kygWWelkAwmGGqTRyS+e/8MgKYrGXrxn82eAZRwgpg7Gy0edYciF+FbAt+vNtIdnIlOGGJazihf+gnNriFu5dxZiiO7/0KsYwP6/scNbiBA4DGpgIZagfXjUU5myHvn1jfCil01NrdHj5cnocm2GA7oXdmBC1XLl9TEdxp5j1Bnei1IVylGmIpR4WHEEslqoHL0GCIetJjOyULBxv1+gLBZRCJcvvro8Yylk02yXbmyLX9iDgfNALUeu/mkxfdr+dXdIQN/TGjhTQVTtgwH4QaDH9OZzbwAwSK4OiTbZUSDW4cu8ATDY0lnVKEU1/dDKh2/pbexR7xSpshZ7NsaXtNPGgsAN2wdHq2Fqx+9wAN8o8IlzYFt6vd89WvD4eIdnG93D2lSrtNen6LWDivaSzmzt6Bn2Ac7giR9p1aN+0aCVaCAVR2UlK0giXEB3ZzE6uaCt/mmOWa218Nj4TiRFVZZ3Leh9W+TJkAS5QqGYnad0WGziXrgFJx0WHCwsVXKdwuayovYcXKDvbXK5Oww9WVSIa44XGKVitSc52+k45K31Lyn8Ix4XDndidtPP3qkfWUiEKzq/90Z3kdjjHEOcBcxTCIzOjwA1b0TWbOTgXRv/kRVXJBk/GvQ1zpoBy1mg+wJg+gto5uVkjBOaSdw4itEg0dAijUj4/I1tvY="
+  - SFTP_DEST=ubuntu@128.196.65.128
 
 # Basic information for build
 before_install:
@@ -38,7 +39,9 @@ before_install:
   - docker-compose --version
   - pip3 install boxsdk
   - openssl aes-256-cbc -K $encrypted_53c1c3cd3f28_key -iv $encrypted_53c1c3cd3f28_iv -in junk.enc -out ./junk -d
-  - cat ./junk
+  - echo "$SFTP_DEST"
+  - echo "@get rgbmask_test_data.tar" | sftp -i ./junk -b - "$SFTP_DEST"
+  - echo "@get rgbmask_results.tar" | sftp -i ./junk -b - "$SFTP_DEST"
 
 # Start up the test bed containers and copy files from other locations as needed
 install:
@@ -60,9 +63,6 @@ install:
   - echo "API KEY:$API_KEY"
   # Pull down the testing files
   #- ./test/fetch_box_archives.py "$TEST_COMPARE_ARCHIVE" "$TEST_SOURCE_ARCHIVE"
-  - echo "$SFTP_DEST"
-  - echo "@get rgbmask_test_data.tar" | sftp -i ./junk -b - "$SFTP_DEST"
-  - echo "@get rgbmask_results.tar" | sftp -i ./junk -b - "$SFTP_DEST"
 
 # Setup the clowder environment
 before_script:
