@@ -82,7 +82,7 @@ before_script:
 # Start the extraction process and get a result
 script:
   - curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d '{"extractor":"$EXTRACTOR_NAME"}' "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
-  - ./test/wait_for_extractor.py "$EXTRACTOR_NAME"
+  - ./test/wait_for_extractor.py "$CONTAINER_NAME"
   - ./test/extract_results.py  "$TEST_DATASET_NAME"      # get the results from where ever they ended up
   - ./test/setup_comparables.sh "$TEST_COMPARE_ARCHIVE"  # setup any comparables
   - ./test/validate_results.py      # verify the results

@@ -24,7 +24,8 @@ dockerId = None
 for i in range(0, CONTAINER_ID_LOOP_MAX):
     res = subprocess.check_output(["/bin/bash", "-c", "docker ps | grep '" + extractorName +
                                   "' || echo ' '"])
-    if not extractorName in res:
+    print("Check result: "+str(res))
+    if not extractorName in str(res):
         print("Sleeping while waiting for extractor...")
         time.sleep(SLEEP_SECONDS_ID)
     else:
