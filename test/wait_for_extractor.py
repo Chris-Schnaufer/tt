@@ -22,10 +22,10 @@ extractorName = sys.argv[1].strip()
 # Find the ID
 dockerId = None
 for i in range(0, CONTAINER_ID_LOOP_MAX):
-    res = subprocess.check_output(["/bin/bash", "-c", "docker ps | grep '" + extractorName +
+    cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker ps | grep '" + extractorName +
                                   "' || echo ' '"])
-    print("Check result: "+str(res))
-    if not extractorName in str(res):
+    res = str(cmd_res)
+    if not extractorName in res:
         print("Sleeping while waiting for extractor...")
         time.sleep(SLEEP_SECONDS_ID)
     else:
@@ -45,7 +45,8 @@ done = False
 starttime = datetime.datetime.now()
 print("Begining monitoring of extractor: " + extractorName)
 while not done:
-    res = subprocess.check_output(["/bin/bash", "-c", "docker logs " + dockerId + " 2>&1 | tail -n 50"])
+    cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker logs " + dockerId + " 2>&1 | tail -n 50"])
+    res = str(cmd_res)
     if "StatusMessage.done: Done processing" in res:
         print("Detected end of processing")
         sys.exit(0)
