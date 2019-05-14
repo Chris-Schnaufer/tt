@@ -73,7 +73,7 @@ before_script:
   - echo "DATASET ID:$DATASET_ID"
   - docker build -t chrisatua/extractors:test ./
   - docker run --network clowder_clowder -e 'RABBITMQ_URI=amqp://rabbitmq/%2F' -e 'RABBITMQ_EXCHANGE=terra' -d $CONTAINER_NAME
-  - export EXTRACTOR_NAME=`cat extractor_info.json | grep '\"name\"' | sed -r 's/\"name\"\:.*\"(.+)\",/\1/'`
+  - export EXTRACTOR_NAME=`cat extractor_info.json | grep '\"name\"' | sed -r 's/\"name\"\:.*\"(.+)\",/\1/' | tr -d '[:space:]'`
   - echo "$EXTRACTOR_NAME"
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
   - ./test/upload_data.py                     # Put the files into clowder

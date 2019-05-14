@@ -8,7 +8,7 @@ import time
 import datetime
 import subprocess
 
-CONTAIONER_ID_LOOP_MAX = 10
+CONTAINER_ID_LOOP_MAX = 10
 SLEEP_SECONDS_ID = 5
 SLEEP_SECONDS_FINISH = 20
 
@@ -17,13 +17,15 @@ num_args = len(sys.argv)
 if num_args < 2:
     raise RuntimeError("Missing the extractor name")
 
-extractorName = sys.argv[1]
+extractorName = sys.argv[1].strip()
 
 # Find the ID
 dockerId = None
-for i in range(0, CONTAIONER_ID_LOOP_MAX):
-    res = subprocess.check_output(["/bin/bash", "-c", "docker ps | grep '"+extractorName+"'"])
+for i in range(0, CONTAINER_ID_LOOP_MAX):
+    res = subprocess.check_output(["/bin/bash", "-c", "docker ps | grep '" + extractorName +
+                                  "' || echo ' '"])
     if not extractorName in res:
+        print("Sleeping while waiting for extractor...")
         time.sleep(SLEEP_SECONDS_ID)
     else:
         try:
@@ -34,7 +36,7 @@ for i in range(0, CONTAIONER_ID_LOOP_MAX):
         if not dockerId is None:
             break
 
-if not dockerId is None:
+if dockerId is None:
     raise RuntimeError("Unable to find Docker ID of extractor: '" + extractorName + "'")
 
 # Loop here until we detect the end of processing
