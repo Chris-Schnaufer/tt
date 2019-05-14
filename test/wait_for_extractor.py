@@ -39,6 +39,13 @@ for i in range(0, CONTAINER_ID_LOOP_MAX):
     else:
         try:
             dockerId = re.search(r"^\S*", res).group(0).strip()
+            if dockerId.startswith("b'"):
+                print("Starts with")
+                dockerId = dockerId[2:]
+                print("New: "+dockerId)
+            else:
+                print("1: "+dockerId[0])
+                print("2: "+dockerId[1])
         except Exception:
             pass
 
