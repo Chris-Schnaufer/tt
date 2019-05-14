@@ -8,7 +8,9 @@ import sys
 import json
 import requests
 
-API_BASE = "http://localhost:9000/api"
+docker_uri = os.getenv("CLOWDER_HOST_URI", "http://localhost:9000")
+
+API_BASE = "%s/api" % (docker_uri)
 
 # Get the name of the test dataset
 test_ds_name = "test_dataset"

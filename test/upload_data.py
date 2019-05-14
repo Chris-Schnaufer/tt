@@ -18,10 +18,17 @@ if num_files <= 0:
 # Prepare to upload the files
 key = os.getenv("API_KEY")
 dataset = os.getenv("DATASET_ID")
+docker_uri = os.getenv("CLOWDER_HOST_URI", "http://localhost:9000")
 
-url = "https://localhost:9000/api/uploadToDataset/" + dataset + "?extract=false&key=" + key
+print("API KEY: "+key)
+print("DATASET ID: "+dataset)
+print("CLOWDER URI: "+dataset)
+
+url = "%sapi/uploadToDataset/%s?extract=false&key=%s" % (docker_uri, dataset, key)
 headers = {"Content-Type": "multipart/form-data", "accept": "application/json"}
 
+print ("URL: "+url)
+print("Headers: "+str(headers))
 for one_file in files:
     print("Attempting upload of file '" + one_file + "'")
     with open(one_file, 'rb') as fh:
