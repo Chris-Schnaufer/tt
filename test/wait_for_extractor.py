@@ -25,12 +25,13 @@ for i in range(0, CONTAINER_ID_LOOP_MAX):
     cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker ps | grep '" + extractorName +
                                   "' || echo ' '"])
     res = str(cmd_res)
+    print("Res: "+res)
     if not extractorName in res:
         print("Sleeping while waiting for extractor...")
         time.sleep(SLEEP_SECONDS_ID)
     else:
         try:
-            dockerId = re.search(r"^\S*", res).group(0)
+            dockerId = re.search(r"^\S*", res).group(0).strip()
         except Exception:
             pass
 
@@ -41,11 +42,12 @@ if dockerId is None:
     raise RuntimeError("Unable to find Docker ID of extractor: '" + extractorName + "'")
 
 # Loop here until we detect the end of processing
+print("Docker id: "+dockerId)
 done = False
 starttime = datetime.datetime.now()
 print("Begining monitoring of extractor: " + extractorName)
 while not done:
-    cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker logs " + dockerId + " 2>&1 | tail -n 50"])
+    cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker logs " + dockerId + " 2>&1 | tail -n 50 || echo ' '"])
     res = str(cmd_res)
     if "StatusMessage.done: Done processing" in res:
         print("Detected end of processing")

@@ -5,6 +5,7 @@ sudo: required
 language: python
 python: 
   - "3.6"
+cache: pip
 
 # What sources to auto build
 branches:
@@ -39,7 +40,7 @@ before_install:
   - ls -l docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
-  - pip3 install boxsdk
+  - pip install boxsdk
   # Remove next 2 lines when we have Box enabled
   - pip install pysftp
   - ./test/download_archives.py
@@ -87,7 +88,8 @@ script:
   - ./test/setup_comparables.sh "$TEST_COMPARE_ARCHIVE"  # setup any comparables
   - ./test/validate_results.py      # verify the results
 
-#after_success:
+after_success:
+  - ls -la
 
 before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
