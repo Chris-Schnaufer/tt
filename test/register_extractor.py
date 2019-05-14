@@ -31,7 +31,7 @@ key = os.getenv("API_KEY")
 clowder_uri = os.getenv("CLOWDER_HOST_URI", "http://localhost:9000")
 
 url = "%s/api/extractors?key=%s" % (clowder_uri, key)
-headers = {"Content-Type": "multipart/form-data", "accept": "application/json"}
+headers = {"accept": "application/json"}
 
-res = requests.post(url, headers=headers, data=json.dumps(reg_data))
+res = requests.post(url, headers=headers, data=reg_data)
 res.raise_for_status()
