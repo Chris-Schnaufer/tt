@@ -53,8 +53,10 @@ print("Docker id: "+dockerId)
 done = False
 starttime = datetime.datetime.now()
 print("Begining monitoring of extractor: " + extractorName)
+bash_cmd = "docker logs " + dockerId + " 2>&1 | tail -n 50 || echo ' '"
+print("Bash command: " + bash_cmd)
 while not done:
-    cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker logs " + dockerId + " 2>&1 | tail -n 50 || echo ' '"])
+    cmd_res = subprocess.check_output(["/bin/bash", "-c", bash_cmd])
     res = str(cmd_res)
     if "StatusMessage.done: Done processing" in res:
         print("Detected end of processing")
