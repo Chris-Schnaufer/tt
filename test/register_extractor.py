@@ -28,9 +28,9 @@ if not reg_data:
 
 # Register the extractor
 key = os.getenv("API_KEY")
-docker_uri = os.getenv("CLOWDER_HOST_URI", "http://localhost:9000")
+clowder_uri = os.getenv("CLOWDER_HOST_URI", "http://localhost:9000")
 
-url = "%s/api/extractors?key=%s" % (docker_uri, key)
+url = "%s/api/extractors?key=%s" % (clowder_uri, key)
 headers = {"Content-Type": "multipart/form-data", "accept": "application/json"}
 
 res = requests.post(url, headers=headers, data=json.dumps(reg_data))
