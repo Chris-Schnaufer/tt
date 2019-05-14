@@ -43,7 +43,7 @@ before_install:
   #- echo "$SFTP_DEST"
   #- echo "@get rgbmask_test_data.tar" | sftp -i ./junk -b - "$SFTP_DEST"
   #- echo "@get rgbmask_results.tar" | sftp -i ./junk -b - "$SFTP_DEST"
-  - apt install sshpass
+  - sudo apt install sshpass
   - "$FTP_CP"
 
 # Start up the test bed containers and copy files from other locations as needed
