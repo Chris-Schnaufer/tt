@@ -58,8 +58,8 @@ install:
   - echo "API KEY:$API_KEY"
   # Pull down the testing files
   #- ./test/fetch_box_archives.py "$TEST_COMPARE_ARCHIVE" "$TEST_SOURCE_ARCHIVE"
-  - echo "@get rgbmask_test_data.tar" | ssh -i ./junk -b -
-  - echo "@get rgbmask_results.tar" | ssh -i ./junk -b -
+  - echo "@get rgbmask_test_data.tar" | sftp -i ./junk -b -
+  - echo "@get rgbmask_results.tar" | sftp -i ./junk -b -
 
 # Setup the clowder environment
 before_script:
