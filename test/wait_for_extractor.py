@@ -27,9 +27,10 @@ dockerId = None
 filter_param = ""
 if not CONTAINER_NAMED is None:
     filter_param = '--filter "name=' + CONTAINER_NAMED + '"'
+bash_cmd = "docker ps " + filter_param + " | grep --color=never '" + extractorName +"' || echo ' '"
+print("Bash command: " + bash_cmd)
 for i in range(0, CONTAINER_ID_LOOP_MAX):
-    cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker ps " + filter_param +
-                                      " | grep '" + extractorName +"' || echo ' '"])
+    cmd_res = subprocess.check_output(["/bin/bash", "-c", bash_cmd])
     res = str(cmd_res)
     print("Res: "+res)
     if not extractorName in res:

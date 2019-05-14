@@ -41,7 +41,7 @@ before_install:
   - ls -l docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
-  - pip install boxsdk
+  - pip install boxsdk, opencv-python, numpy
   # Remove next 2 lines when we have Box enabled
   - pip install pysftp
   - ./test/download_archives.py
