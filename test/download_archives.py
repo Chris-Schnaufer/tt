@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import os
 import pysftp
@@ -10,7 +10,7 @@ u = os.getenv('SFTP_U')
 p = os.getenv('SFTP_P')
 
 cnopts = pysftp.CnOpts()
-cnopts.hostkeys = None   
+cnopts.hostkeys = None
 
 with pysftp.Connection(host=h, username=u, password=p, cnopts=cnopts) as sftp:
     print("Connection succesfully established ... ")
