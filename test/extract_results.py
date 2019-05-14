@@ -60,4 +60,4 @@ for ds in datasets:
             ds_files.append(dest)
         return_ds[ds['name']] = ds_files
 
-print json.dumps(return_ds)
+print(json.dumps(return_ds))

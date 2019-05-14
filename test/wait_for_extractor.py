@@ -40,23 +40,23 @@ if not dockerId is None:
 # Loop here until we detect the end of processing
 done = False
 starttime = datetime.datetime.now()
-print "Begining monitoring of extractor: " + extractorName
+print("Begining monitoring of extractor: " + extractorName)
 while not done:
     res = subprocess.check_output(["/bin/bash", "-c", "docker logs " + dockerId + " 2>&1 | tail -n 50"])
     if "StatusMessage.done: Done processing" in res:
-        print "Detected end of processing"
+        print("Detected end of processing")
         sys.exit(0)
     if "exit status" in res:
-        print "Extractor status command exited with an error."
-        print "Partial results follows."
-        print res
+        print("Extractor status command exited with an error.")
+        print("Partial results follows.")
+        print(res)
         raise RuntimeError("Early exit from checking docker container status: "  + extractorName)
     if "Traceback" in res:
-        print "Docker container appears to have thrown an unhandled exception"
-        print "Partial results follow."
-        print res
+        print("Docker container appears to have thrown an unhandled exception")
+        print("Partial results follow.")
+        print(res)
         raise RuntimeError("Container threw an exception: " + extractorName)
     curtime = datetime.datetime.now()
     timedelta = curtime - starttime
-    print "Sleep while wiating on container: " + timedelta.total_seconds() + " elapsed seconds"
+    print("Sleep while wiating on container: " + timedelta.total_seconds() + " elapsed seconds")
     time.sleep(SLEEP_SECONDS_FINISH)

@@ -13,7 +13,7 @@ BOX_CONFIG=os.getenv("BOX_CONFIG_FILE", "box.json")
 # Make sure we have files to download
 argc = len(sys.argv)
 if argc < 2:
-    print "No filenames specified on the command line to download"
+    print("No filenames specified on the command line to download")
     sys.exit(0)
 
 def get_id_from_folder(client, parent_id, item_name, item_type='folder'):
@@ -54,7 +54,7 @@ for idx in range(1, argc):
     file = sys.argv[idx]
     folder, filename = os.path.split(file)
     if not filename:
-        print "An invalid file download was requested: '" + file + "'"
+        print("An invalid file download was requested: '" + file + "'")
         continue
 
     # Find the ID of the folder the file is to be in
@@ -67,13 +67,13 @@ for idx in range(1, argc):
                 break
 
     if not folder_id:
-        print "Folder not found in Box: '" + file + "'"
+        print("Folder not found in Box: '" + file + "'")
         continue
 
     # Get the ID of the file
     file_id = get_id_from_folder(client, folder_id, filename, item_type='file')
     if not file_id:
-        print "File name not found in folder: '" + file + "'"
+        print("File name not found in folder: '" + file + "'")
 
     # Download the file
     # We use the box file name instead of our name so that the search for the correct

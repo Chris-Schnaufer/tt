@@ -23,7 +23,7 @@ url = "https://localhost:9000/api/uploadToDataset/" + dataset + "?extract=false&
 headers = {"Content-Type": "multipart/form-data", "accept": "application/json"}
 
 for one_file in files:
-    print "Attempting upload of file '" + one_file + "'"
+    print("Attempting upload of file '" + one_file + "'")
     with open(one_file, 'rb') as fh:
         res = requests.post(url, headers=headers, data={"File": fh})
         res.raise_for_status()
