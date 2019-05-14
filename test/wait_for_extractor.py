@@ -2,6 +2,7 @@
 
 """Registers the extractor using the file passed in as a parameter
 """
+import os
 import re
 import sys
 import time
@@ -12,6 +13,8 @@ CONTAINER_ID_LOOP_MAX = 10
 SLEEP_SECONDS_ID = 5
 SLEEP_SECONDS_FINISH = 20
 
+CONTAINER_NAMED=os.getenv("DOCKER_NAMED_CONTAINER")
+
 # Make sure we're configured correctly
 num_args = len(sys.argv)
 if num_args < 2:
@@ -21,9 +24,12 @@ extractorName = sys.argv[1].strip()
 
 # Find the ID
 dockerId = None
+filter_param = ""
+if not CONTAINER_NAMED is None:
+    filter_param = '--filter "name=' + CONTAINER_NAMED + '"'
 for i in range(0, CONTAINER_ID_LOOP_MAX):
-    cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker ps | grep '" + extractorName +
-                                  "' || echo ' '"])
+    cmd_res = subprocess.check_output(["/bin/bash", "-c", "docker ps " + filter_param +
+                                      " | grep '" + extractorName +"' || echo ' '"])
     res = str(cmd_res)
     print("Res: "+res)
     if not extractorName in res:

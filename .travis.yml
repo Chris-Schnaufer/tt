@@ -28,6 +28,7 @@ env:
   - secure: "glzkTxM/RF/MNX+hBKnpRlsb2QCfT6H8qBAZGuw9iPAQVSR6U6YHmvRyY32WhLWvhP7G3Wl3Yv/Q5X2HZWYT30J10AXFbPesDgDhwo1/WGkDoinDExC3PVgpwKV4Qb1gxWalb8tFC2lVS1LhkDlaBFIRsQU8rxLGu5700d5EdR6taXy8aQ08Ttgg0WDCuxazs0l0hAcpYqUmynCcSmTrzItrL2NIdp6JOoDn7+tCU2HuNfmoXwFUGInbqtrEL0s7aIp4dOONjCQER2VB1bfx2rAK/dpkywNsHP28qSmMOSX7Fgrvc3RrhCWmXlotRipOEwbZJ++6GUj1iqH9JXhx96J3EKpyIM4amDLthE78xcPkYfBYtX+6Dn6Vj3ONu5RQuG/6rMN0hSps7qTHx3PdOOk269jaZQI8vjlhuhoZCiMCnBx8O/h5gpk2w1So1+yivF1J1cWvosvv9MHlFeR0zCPkndw/eimPh6Em+GDzu/+5m3Hgxkx+tlTMBo5HKQoRaIDlPZwkjONCQ+0ntaG+0rtepYJTXBFEliA1zBajuAYHnGwqtKW/N9U2iA+MwXwBMW0SLD1rNqDVPRsf3SfcLTRrdQMxmxoHHfsXxLY/ST1Umzu+eHUGU8DGuJdkCJVafCBmr+Qrg5eqfIJMIE/iizO1peLqV4iF+XJUPwtP5Qc="
   - secure: "Pmz+XzLvUDQJzJqMSHuydikR/HLkXs31eVoNhukdLwGjEB8PuIGdBpgtl8xK+W4oGeu9QaU8/0r+XPGY1SwT9hlqwXbM3Uz57aCs6/cbFIbfIx4oQhw9VZxAne3cl3Th4qWoexNp5icwRxrVxzWTRsghMn5xfSWiOLrA+146R/deeQZkHHLfmt8MgjkxxwrvX97TlJ0fhs4Ibl+o5ziqhcza9LFBSRRrcckv+5i8najI56H4YmP0tezOm640luM9/yuB/bG0iGOOqAtRdibNITVqwF+GYmIVcVfSuuQQl6NYSDefGRs13EcSBH1tJyjPs6o9AbOU+emAzPKWuOM+J/BmQ9CRDdWNtkEvwRsxUmKymy7dJ2mWX5ckeTdsJol598019B1S6E5q7vsdYFSyw24mblZtLu3QyLgrqTu8dAAhwgLWck82vKuSQNN1YcZqldh8vcBPoT5xN8c7nZTmYQ9FOighvXV0A/Bbw11v1WGesxjEEppSPsPGk9qtrfQ6hHNqCCwbP3B7ICKhh+a06rw8y+g7m5RGsSp/MaMTimNw/qqwt3S3crS6fkP8iIkCkxk+QCc0U8F+aNhSlmjsY2x4VN7rwDVuOdIhV7fZSEF/y6Oo75o+SZzzS+WBCE+q7SV/y6SryxAZ9l/zrJTDQMNdjKkveMn9JJdSkYg/mS8="
   - secure: "W9QXZjVBNfkI/8WsQ/I+rJPNXUl+FoClcUzF5YHICbkYq1gjgjPjIHYNJ6ks7MkGlT8D6AeYbbsmJ8oMu4ib8frzeRmFNybe4mDSd2+Y2oaM7vHJl96GUdke0D4zTaJ/j26wZyDvTQ+BnAs+wl5vizBbRN6SnGm7ynqmQkOGfqO7Fe9tdPTuNmsH1l/j4E/O0eo7hb1j+PJiX5DfdUmAV/LyycqjP7sncPdPBzkgbSmn0TlHcLLi2H+9WgGcEjmlIpAZ/KwX/maG6uQNiHls7GYGnF6GSJM3DWUKEyYDLSdtbtasM8la8u9fvCoitHntnabBkWXqfKDS6hw8N1fsPY/h74MwR0diA1Lmx7Py+Q22LcweXpNQk+XhofJhyswcoAArRuJxFczJUdFNy8J0jWaQKXYoQgNqkqfAm8fp7RSr6Rsqqxh0vdEgs+aWwnws7+UjuOSvlApcVdTNIm/xqzuQat37G5s5Qsi9IVEOcPylBIhvLkOad+DkSfliRUwjtEmMh4adbg+PTAxbH+uyPwjW+LPxHCxcERgOibcWpDf/45BTl32Hkn5rSN+BRN8zYARZGgg7zC6fj4HgOz+RySVrNvLrQ/fC8erQgdH1O67ThPE1ziekTzgv7bn4Xevk0x6Nb0DaZdVWF5pPYD7MHPSFdW4b3gjvch9s0XM13TU="
+  - DOCKER_NAMED_CONTAINER=test_extractor   # Used to name the container for easier finding
 
 # Basic information for build
 before_install:
@@ -73,7 +74,7 @@ before_script:
   - export DATASET_ID=`curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d '{"name":"$TEST_DATASET_NAME"}' "$CLOWDER_HOST_URI/api/datasets/createempty?key=$API_KEY" | sed -r 's/.*id\"\:\"(.+)\".*/\1/'`
   - echo "DATASET ID:$DATASET_ID"
   - docker build -t chrisatua/extractors:test ./
-  - docker run --network clowder_clowder -e 'RABBITMQ_URI=amqp://rabbitmq/%2F' -e 'RABBITMQ_EXCHANGE=terra' -d $CONTAINER_NAME
+  - docker run --network clowder_clowder -e 'RABBITMQ_URI=amqp://rabbitmq/%2F' -e 'RABBITMQ_EXCHANGE=terra' -d --name=test_extractor $CONTAINER_NAME
   - export EXTRACTOR_NAME=`cat extractor_info.json | grep '\"name\"' | sed -r 's/\"name\"\:.*\"(.+)\",/\1/' | tr -d '[:space:]'`
   - echo "$EXTRACTOR_NAME"
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
@@ -90,6 +91,9 @@ script:
 
 after_success:
   - ls -la
+  - ls -la $HOME
+  - ls -la $HOME/.cache
+  - ls -la $HOME/.cache/pip
 
 before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
