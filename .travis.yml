@@ -86,6 +86,7 @@ before_script:
 
 # Start the extraction process and get a result
 script:
+  - docker exec -t clowder_rabbitmq_1 /opt/rabbitmq/escript/rabbitmq-diagnostics list_bindings
   #- curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d \'{"extractor":"$EXTRACTOR_NAME"}\' "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
   - ./test/start_extract.py '{"extractor":"$EXTRACTOR_NAME"}' "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
   - ./test/wait_for_finish.py "$CONTAINER_NAME"
