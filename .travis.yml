@@ -73,7 +73,7 @@ install:
 before_script:
   - export SPACE_ID=`curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d '{"name":"test_space","description":"Test results"}' "$CLOWDER_HOST_URI/api/spaces?key=$API_KEY" | sed -r 's/.*id\"\:\"(.+)\".*/\1/'`
   - echo "SPACE_ID:$SPACE_ID"
-  - export DATASET_ID=`curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d \'{"name":"$TEST_DATASET_NAME"}\' "$CLOWDER_HOST_URI/api/datasets/createempty?key=$API_KEY" | sed -r 's/.*id\"\:\"(.+)\".*/\1/'`
+  - export DATASET_ID=`curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d "{\"name\":\"$TEST_DATASET_NAME\"}" "$CLOWDER_HOST_URI/api/datasets/createempty?key=$API_KEY" | sed -r 's/.*id\"\:\"(.+)\".*/\1/'`
   - echo "DATASET ID:$DATASET_ID"
   - docker build -t chrisatua/extractors:test ./
   - docker run --network clowder_clowder -e 'RABBITMQ_URI=amqp://rabbitmq/%2F' -e 'RABBITMQ_EXCHANGE=terra' -d --name=test_extractor $CONTAINER_NAME
