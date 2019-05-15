@@ -30,6 +30,11 @@ headers = {"accept": "application/json"}
 print ("URL: "+url)
 print("Headers: "+str(headers))
 for one_file in files:
+    base_name = os.path.basename(one_file)
+    if base_name[0] == '.':
+        print "Skipping hidden file '" + one_file + "'"
+        continue
+
     print("Attempting upload of file '" + one_file + "'")
     with open(one_file, 'rb') as fh:
         res = requests.post(url, headers=headers, files={"File": (os.path.basename(one_file), fh)})
