@@ -90,6 +90,8 @@ script:
   - ./test/wait_for_finish.py "$CONTAINER_NAME"
   - ./test/extract_results.py  "$TEST_DATASET_NAME"      # get the results from where ever they ended up
   - ./test/setup_comparables.sh "$TEST_COMPARE_ARCHIVE"  # setup any comparables
+  - ls -la ./datasets
+  - ls -la ./compare
   - ./test/validate_results.py      # verify the results
 
 after_success:
