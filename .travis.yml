@@ -32,6 +32,7 @@ env:
 
 # Basic information for build
 before_install:
+  - echo curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d \'{"extractor":"$DOCKER_NAMED_CONTAINER"}\'
   - docker --version
   - ls -l
   - echo "Attempting to update to docker-compose version:$DOCKER_COMPOSE_VERSION"
@@ -86,7 +87,7 @@ before_script:
 
 # Start the extraction process and get a result
 script:
-  - echo curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d \'{"extractor":"$EXTRACTOR_NAME"}'\ "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
+  - echo curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d \'{"extractor":"$EXTRACTOR_NAME"}\' "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
   - curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d \'{"extractor":"$EXTRACTOR_NAME"}\' "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
   - ./test/wait_for_finish.py "$CONTAINER_NAME"
   - ./test/extract_results.py  "$TEST_DATASET_NAME"      # get the results from where ever they ended up
