@@ -18,7 +18,7 @@ CONTAINER_NAMED=os.getenv("DOCKER_NAMED_CONTAINER")
 
 # Make sure we're configured correctly
 num_args = len(sys.argv)
-if num_args < 3:
+if num_args < 2:
     raise RuntimeError("Missing the extractor name or its clowder name")
 
 dockerizedName = sys.argv[1].strip()
