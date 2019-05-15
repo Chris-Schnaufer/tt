@@ -14,7 +14,7 @@ SLEEP_SECONDS_STARTED = 10
 CONTAINER_ID_LOOP_MAX = 10
 CONTAINER_STARTED_LOOP_MAX = 10
 
-CONTAINER_NAMED=os.getenv("DOCKER_NAMED_CONTAINER")
+CONTAINER_NAMED = os.getenv("DOCKER_NAMED_CONTAINER")
 
 # Make sure we're configured correctly
 num_args = len(sys.argv)

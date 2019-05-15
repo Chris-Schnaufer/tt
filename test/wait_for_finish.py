@@ -14,7 +14,7 @@ SLEEP_SECONDS_FINISH = 20
 CONTAINER_ID_LOOP_MAX = 10
 CONTAINER_FINISH_LOOP_MAX = 5000
 
-CONTAINER_NAMED=os.getenv("DOCKER_NAMED_CONTAINER")
+CONTAINER_NAMED = os.getenv("DOCKER_NAMED_CONTAINER")
 
 # Make sure we're configured correctly
 num_args = len(sys.argv)
@@ -58,7 +58,7 @@ starttime = datetime.datetime.now()
 print("Begining monitoring of extractor: " + dockerizedName)
 bash_cmd = "docker logs " + dockerId + " 2>&1 | tail -n 50 || echo ' '"
 print("Bash command: " + bash_cmd)
-for i in range(1, CONTAINER_FINISH_LOOP_MAX)
+for i in range(1, CONTAINER_FINISH_LOOP_MAX):
     cmd_res = subprocess.check_output(["/bin/bash", "-c", bash_cmd])
     res = str(cmd_res)
     print("Result: " + res)
