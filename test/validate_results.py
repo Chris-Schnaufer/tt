@@ -36,6 +36,11 @@ def find_file_match(folder, end):
            before its sub-folders are examined. Each subfolder is examined in depth before
            moving on to the next subfolder
     """
+    if not os.path.exists(folder):
+        return None
+    if not os.path.isdir(folder):
+        return None
+
     dir_list = os.listdir(folder)
     subdirs = []
 
@@ -64,9 +69,9 @@ master = find_file_match(compare_folder, file_ending)
 source = find_file_match(datasets_folder, file_ending)
 
 if master is None:
-    raise RuntimeError("Missing the comparison file used to validate results")
+    raise RuntimeError("Missing the comparison files used to validate results")
 if source is None:
-    raise RuntimeError("Missing the resulting file from the dataset")
+    raise RuntimeError("Missing the resulting files from the dataset")
 
 im_mas = cv2.imread(master)
 im_src = cv2.imread(source)
