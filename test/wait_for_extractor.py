@@ -80,5 +80,5 @@ while not done:
         raise RuntimeError("Container threw an exception: " + extractorName)
     curtime = datetime.datetime.now()
     timedelta = curtime - starttime
-    print("Sleep while wiating on container: " + timedelta.total_seconds() + " elapsed seconds")
+    print("Sleep while wiating on container: " + str(timedelta.total_seconds()) + " elapsed seconds")
     time.sleep(SLEEP_SECONDS_FINISH)
