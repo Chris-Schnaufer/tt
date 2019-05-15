@@ -40,12 +40,7 @@ for i in range(0, CONTAINER_ID_LOOP_MAX):
         try:
             dockerId = re.search(r"^\S*", res).group(0).strip()
             if dockerId.startswith("b'"):
-                print("Starts with")
                 dockerId = dockerId[2:]
-                print("New: "+dockerId)
-            else:
-                print("1: "+dockerId[0])
-                print("2: "+dockerId[1])
         except Exception:
             pass
 
@@ -65,6 +60,7 @@ print("Bash command: " + bash_cmd)
 while not done:
     cmd_res = subprocess.check_output(["/bin/bash", "-c", bash_cmd])
     res = str(cmd_res)
+    print("Result: " + res)
     if "StatusMessage.done: Done processing" in res:
         print("Detected end of processing")
         sys.exit(0)
