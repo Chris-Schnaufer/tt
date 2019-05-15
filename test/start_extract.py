@@ -5,6 +5,7 @@
 
 import sys
 import json
+import time
 import requests
 
 data_load = sys.argv[1]
@@ -19,5 +20,7 @@ headers = {"accept": "application/json", "Content-Type":"application/json"}
 print("JSON data: "+str(json_data))
 print("headers: " + str(headers))
 
-res = requests.post(uri, headers=headers, data=json.dumps(json_data))
-res.raise_for_status()
+for i in range(1, 5):
+    res = requests.post(uri, headers=headers, data=json.dumps(json_data))
+    res.raise_for_status()
+    time.sleep(5)
