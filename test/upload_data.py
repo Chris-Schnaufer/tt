@@ -32,7 +32,7 @@ print("Headers: "+str(headers))
 for one_file in files:
     base_name = os.path.basename(one_file)
     if base_name[0] == '.':
-        print "Skipping hidden file '" + one_file + "'"
+        print("Skipping hidden file '" + one_file + "'")
         continue
 
     print("Attempting upload of file '" + one_file + "'")
