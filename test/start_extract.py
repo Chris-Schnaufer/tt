@@ -8,9 +8,10 @@ import json
 import time
 import requests
 
-data_load = sys.argv[1]
+extractor_name = sys.argv[1]
 uri = sys.argv[2]
 
+data_load = '{"extractor": "' + extractor_name + '"}'
 print("Data: >" + data_load + "<")
 print("URL: " + uri)
 
