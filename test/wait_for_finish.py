@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Waits for the extract to get started
+"""Waits for the extract to finish
 """
 import os
 import re
