@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Registers the extractor using the file passed in as a parameter
+"""Waits for the extract to get started
 """
 import os
 import re
@@ -9,9 +9,10 @@ import time
 import datetime
 import subprocess
 
-CONTAINER_ID_LOOP_MAX = 10
 SLEEP_SECONDS_ID = 5
 SLEEP_SECONDS_FINISH = 20
+CONTAINER_ID_LOOP_MAX = 10
+CONTAINER_FINISH_LOOP_MAX = 5000
 
 CONTAINER_NAMED=os.getenv("DOCKER_NAMED_CONTAINER")
 
@@ -20,20 +21,20 @@ num_args = len(sys.argv)
 if num_args < 2:
     raise RuntimeError("Missing the extractor name")
 
-extractorName = sys.argv[1].strip()
+dockerizedName = sys.argv[1].strip()
 
 # Find the ID
 dockerId = None
 filter_param = ""
 if not CONTAINER_NAMED is None:
     filter_param = '--filter "name=' + CONTAINER_NAMED + '"'
-bash_cmd = "docker ps " + filter_param + " | grep --color=never '" + extractorName +"' || echo ' '"
+bash_cmd = "docker ps " + filter_param + " | grep '" + dockerizedName +"' || echo ' '"
 print("Bash command: " + bash_cmd)
 for i in range(0, CONTAINER_ID_LOOP_MAX):
     cmd_res = subprocess.check_output(["/bin/bash", "-c", bash_cmd])
     res = str(cmd_res)
     print("Res: "+res)
-    if not extractorName in res:
+    if not dockerizedName in res:
         print("Sleeping while waiting for extractor...")
         time.sleep(SLEEP_SECONDS_ID)
     else:
@@ -48,16 +49,16 @@ for i in range(0, CONTAINER_ID_LOOP_MAX):
             break
 
 if dockerId is None:
-    raise RuntimeError("Unable to find Docker ID of extractor: '" + extractorName + "'")
+    raise RuntimeError("Unable to find Docker ID of extractor: '" + dockerizedName + "'")
 
 # Loop here until we detect the end of processing
 print("Docker id: "+dockerId)
 done = False
 starttime = datetime.datetime.now()
-print("Begining monitoring of extractor: " + extractorName)
+print("Begining monitoring of extractor: " + dockerizedName)
 bash_cmd = "docker logs " + dockerId + " 2>&1 | tail -n 50 || echo ' '"
 print("Bash command: " + bash_cmd)
-while not done:
+for i in range(1, CONTAINER_FINISH_LOOP_MAX)
     cmd_res = subprocess.check_output(["/bin/bash", "-c", bash_cmd])
     res = str(cmd_res)
     print("Result: " + res)
@@ -68,13 +69,13 @@ while not done:
         print("Extractor status command exited with an error.")
         print("Partial results follows.")
         print(res)
-        raise RuntimeError("Early exit from checking docker container status: "  + extractorName)
+        raise RuntimeError("Early exit from checking docker container status: "  + dockerizedName)
     if "Traceback" in res:
         print("Docker container appears to have thrown an unhandled exception")
         print("Partial results follow.")
         print(res)
-        raise RuntimeError("Container threw an exception: " + extractorName)
+        raise RuntimeError("Container threw an exception: " + dockerizedName)
     curtime = datetime.datetime.now()
     timedelta = curtime - starttime
-    print("Sleep while wiating on container: " + str(timedelta.total_seconds()) + " elapsed seconds")
+    print("Sleep while waiting on container: " + str(timedelta.total_seconds()) + " elapsed seconds")
     time.sleep(SLEEP_SECONDS_FINISH)

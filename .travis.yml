@@ -82,11 +82,12 @@ before_script:
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
   - ./test/upload_data.py                     # Put the files into clowder
   - ./test/register_extractor.py ./extractor_info.json
+  - ./test/wait_for_started.py "$CONTAINER_NAME"
 
 # Start the extraction process and get a result
 script:
   - curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d '{"extractor":"$EXTRACTOR_NAME"}' "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
-  - ./test/wait_for_extractor.py "$CONTAINER_NAME"
+  - ./test/wait_for_finish.py "$CONTAINER_NAME"
   - ./test/extract_results.py  "$TEST_DATASET_NAME"      # get the results from where ever they ended up
   - ./test/setup_comparables.sh "$TEST_COMPARE_ARCHIVE"  # setup any comparables
   - ./test/validate_results.py      # verify the results
