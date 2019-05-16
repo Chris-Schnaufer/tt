@@ -98,6 +98,7 @@ script:
   - ./test/setup_comparables.sh "$TEST_COMPARE_ARCHIVE"  # setup any comparables
   - ls -la
   - ls -la ./datasets
+  - ls -la ./datasets/test_dataset
   - ls -la ./compare
   - ./test/validate_results.py      # verify the results
 

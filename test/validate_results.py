@@ -74,6 +74,9 @@ file_ending = "mask.tif"
 master = find_file_match(compare_folder, file_ending)
 source = find_file_match(datasets_folder, file_ending)
 
+print("Master: " + (master))
+print("Source: " + (source))
+
 if master is None:
     raise RuntimeError("Missing the comparison files used to validate results")
 if source is None:
