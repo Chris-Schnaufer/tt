@@ -35,3 +35,5 @@ headers = {"accept": "application/json", "Content-Type": "application/json"}
 
 res = requests.post(url, headers=headers, data=json.dumps(reg_data))
 res.raise_for_status()
+
+print("Extractor registration result: " + str(res.content))
