@@ -46,9 +46,15 @@ def find_file_match(folder, end):
 
     # First try to find the file. Save any sub folders for later
     for entry in dir_list:
-        if os.path.isfile(entry):
-            if entry.endswith(end):
-                return os.path.join(folder, entry)
+        # Skip over hidden files
+        if entry[0] == '.':
+            continue
+
+        # Check the name to see if it's a file and if it first the descrioption
+        test_path = os.path.join(folder, entry)
+        if os.path.isfile(test_path):
+            if test_path.endswith(end):
+                return test_path
         else:
             subdirs.append(entry)
 
