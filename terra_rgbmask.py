@@ -447,6 +447,9 @@ class rgbEnhancementExtractor(TerrarefExtractor):
                     if newhost:
                         connector.status_update("HACK", resource, "Using new host found on system")
                         host = newhost
+                    else:
+                        connector.status_update("HACK", resource, "New host not found. Forcing host")
+                        host = "http://localhost:9000/"
 
                     connector.status_update("HACK", resource, "Host: '"+host+"'")
                     connector.status_update("HACK", resource, "User: '"+self.clowder_user+"'")
