@@ -37,14 +37,17 @@ return_ds = {}
 datasets = res.json()
 for ds in datasets:
     if 'name' in ds and 'id' in ds and (fetch_ds_name is None or ds['name'] == fetch_ds_name):
+        print("Fetching files for dataset '" + ds['name'])
         url = "%s/datasets/%s/files?%s" % (API_BASE, ds['id'], KEY_PARAM)
         res = requests.get(url, headers=headers)
         res.raise_for_status()
 
         # Download and store each file in the dataset under the dataset name
         files = res.json()
+        print("Dataset files: " + str(files))
         ds_files = []
         for fn in files:
+            print("Fetching file: " + fn['filename'])
             url = "%s/files/%s?%s" % (API_BASE, fn['id'], KEY_PARAM)
             res = requests.get(url, stream=True)
             res.raise_for_status()
