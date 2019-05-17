@@ -443,14 +443,6 @@ class rgbEnhancementExtractor(TerrarefExtractor):
                                                       rgb_mask_tif, remove=self.overwrite)
                 if not found_in_dest:
                     self.log_info(resource, "uploading %s" % rgb_mask_tif)
-                    newhost = os.getenv("CLOWDER_HOST_URI")
-                    if newhost:
-                        connector.status_update("HACK", resource, "Using new host found on system")
-                        host = newhost
-                    else:
-                        connector.status_update("HACK", resource, "New host not found. Forcing host")
-                        host = "http://localhost:9000/"
-
                     connector.status_update("HACK", resource, "Host: '"+host+"'")
                     connector.status_update("HACK", resource, "User: '"+self.clowder_user+"'")
                     connector.status_update("HACK", resource, "Password '"+self.clowder_pass+"'")
