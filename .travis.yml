@@ -81,7 +81,7 @@ before_script:
   - export EXTRACTOR_NAME=`cat extractor_info.json | grep '\"name\"' | sed -r 's/\"name\"\:.*\"(.+)\",/\1/' | tr -d '[:space:]'`
   - echo "$EXTRACTOR_NAME"
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
-  - ./test/update_yaml.sh "./data/experiment.yaml" "$SPACE_ID" "test%40example.com" "testPassword"
+  - ./test/update_yaml.sh "./data/experiment.yaml" "$SPACE_ID" "test@example.com" "testPassword"
   - cat ./data/experiment.yaml
   - ./test/upload_data.py                     # Put the files into clowder
   - ./test/register_extractor.py ./extractor_info.json
