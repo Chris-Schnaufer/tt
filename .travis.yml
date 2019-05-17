@@ -41,7 +41,8 @@ before_install:
   - ls -l docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
-  - sudo apt install libtiff-dev
+  - sudo apt install -y libjpeg-dev
+  - sudo apt install -y libtiff-dev
   - pip install -U pyclowder
   - pip install -U boxsdk
   - pip install -U opencv-python
