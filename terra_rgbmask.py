@@ -443,6 +443,10 @@ class rgbEnhancementExtractor(TerrarefExtractor):
                                                       rgb_mask_tif, remove=self.overwrite)
                 if not found_in_dest:
                     self.log_info(resource, "uploading %s" % rgb_mask_tif)
+                    connector.status_update("HACK", resource, "Host: '"+host+"'")
+                    connector.status_update("HACK", resource, "User: '"+self.clowder_user+"'")
+                    connector.status_update("HACK", resource, "Password '"+self.clowder_pass+"'")
+                    connector.status_update("HACK", resource, "Dataset '"+target_dsid+"'")
                     fileid = upload_to_dataset(connector, host, self.clowder_user, self.clowder_pass,
                                                target_dsid, rgb_mask_tif)
                     uploaded_file_ids.append(host + ("" if host.endswith("/") else "/") +
