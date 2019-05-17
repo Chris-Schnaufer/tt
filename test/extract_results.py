@@ -57,7 +57,7 @@ for ds in datasets:
                 os.makedirs(filepath)
             dest = os.path.join(filepath, fn['filename'])
             try:
-                with open(dest, "w") as out_file:
+                with open(dest, "wb") as out_file:
                     for chunk in res.iter_content(chunk_size=10*1024):
                         out_file.write(chunk)
             except:
