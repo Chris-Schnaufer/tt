@@ -24,6 +24,12 @@ print("API KEY: "+key)
 print("DATASET ID: "+dataset)
 print("CLOWDER URI: "+clowder_uri)
 
+url = "%s/api/datasets/%s" % (clowder_uri, key)
+headers = {"accept": "application/json"}
+res = requests.get(url, header=headers)
+res.raise_for_status()
+print("Current datasets: "+str(res.content))
+
 url = "%s/api/uploadToDataset/%s?extract=false&key=%s" % (clowder_uri, dataset, key)
 headers = {"accept": "application/json"}
 
