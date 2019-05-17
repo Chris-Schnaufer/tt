@@ -59,7 +59,7 @@ for ds in datasets:
             try:
                 with open(dest, "w") as out_file:
                     for chunk in res.iter_content(chunk_size=10*1024):
-                        out_file.write(dest)
+                        out_file.write(chunk)
             except:
                 os.remove(dest)
                 raise
