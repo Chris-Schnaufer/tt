@@ -113,6 +113,9 @@ if 'image dimensions' not in failures:
             failures['image differences'] = True
             break
 
-# Report the errors back
-errs = ', '.join(str(k) for k in failures.keys())
-raise RuntimeError("Errors found: %s" % errs)
+# Report any errors back
+failures_len = len(failures)
+if failures_len > 0:
+    print("We have " + str(failures_len) + "errors detected")
+    errs = ', '.join(str(k) for k in failures.keys())
+    raise RuntimeError("Errors found: %s" % errs)
