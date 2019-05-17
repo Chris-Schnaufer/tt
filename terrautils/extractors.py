@@ -999,6 +999,10 @@ def upload_to_dataset(connector, host, clowder_user, clowder_pass, datasetid, fi
     url = '%sapi/uploadToDataset/%s' % (host, datasetid)
 
     if os.path.exists(filepath):
+        logger.error("[upload_to_dataset] URL: '" + url + "'")
+        logger.error("[upload_to_dataset] File: '" + filepath + "'")
+        logger.error("[upload_to_dataset] User: '" + clowder_user + "'")
+        logger.error("[upload_to_dataset] Password: '" + clowder_pass + "'")
         result = connector.post(url, files={"File": open(filepath, 'rb')},
                                 auth=(clowder_user, clowder_pass))
 
