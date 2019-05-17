@@ -85,6 +85,16 @@ if source is None:
 im_mas = cv2.imread(master)
 im_src = cv2.imread(source)
 
+print ("Master image: "+str(im_mas))
+print ("Test image: "+str(im_src))
+
+if im_mas is None:
+    print("Master image was not loaded: '" + master + "'")
+    exit(1)
+if im_src is None:
+    print("Dataset image was not loaded: '" + source + "'")
+    exit(1)
+
 # We use a dict so that we can add better error handling later if desired
 failures = {}
 
