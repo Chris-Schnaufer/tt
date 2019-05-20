@@ -18,6 +18,11 @@ branches:
 services:
   - docker
 
+stages:
+  - name: after_script
+    # require the branch name to be master (note for PRs this is the base branch name)
+    if: branch = master
+
 # Secure stuff: travis encrypt --com '<var>=<value>'
 #     DockerHub credentials
 env:
@@ -122,7 +127,7 @@ script:
 
 #$after_success:
 
-deploy:
+after_script:
   - echo "Deploying container after successful run"
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push chrisatua/extractors:test
