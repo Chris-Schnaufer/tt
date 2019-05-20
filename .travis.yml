@@ -28,10 +28,12 @@ env:
   - secure: "glzkTxM/RF/MNX+hBKnpRlsb2QCfT6H8qBAZGuw9iPAQVSR6U6YHmvRyY32WhLWvhP7G3Wl3Yv/Q5X2HZWYT30J10AXFbPesDgDhwo1/WGkDoinDExC3PVgpwKV4Qb1gxWalb8tFC2lVS1LhkDlaBFIRsQU8rxLGu5700d5EdR6taXy8aQ08Ttgg0WDCuxazs0l0hAcpYqUmynCcSmTrzItrL2NIdp6JOoDn7+tCU2HuNfmoXwFUGInbqtrEL0s7aIp4dOONjCQER2VB1bfx2rAK/dpkywNsHP28qSmMOSX7Fgrvc3RrhCWmXlotRipOEwbZJ++6GUj1iqH9JXhx96J3EKpyIM4amDLthE78xcPkYfBYtX+6Dn6Vj3ONu5RQuG/6rMN0hSps7qTHx3PdOOk269jaZQI8vjlhuhoZCiMCnBx8O/h5gpk2w1So1+yivF1J1cWvosvv9MHlFeR0zCPkndw/eimPh6Em+GDzu/+5m3Hgxkx+tlTMBo5HKQoRaIDlPZwkjONCQ+0ntaG+0rtepYJTXBFEliA1zBajuAYHnGwqtKW/N9U2iA+MwXwBMW0SLD1rNqDVPRsf3SfcLTRrdQMxmxoHHfsXxLY/ST1Umzu+eHUGU8DGuJdkCJVafCBmr+Qrg5eqfIJMIE/iizO1peLqV4iF+XJUPwtP5Qc="
   - secure: "Pmz+XzLvUDQJzJqMSHuydikR/HLkXs31eVoNhukdLwGjEB8PuIGdBpgtl8xK+W4oGeu9QaU8/0r+XPGY1SwT9hlqwXbM3Uz57aCs6/cbFIbfIx4oQhw9VZxAne3cl3Th4qWoexNp5icwRxrVxzWTRsghMn5xfSWiOLrA+146R/deeQZkHHLfmt8MgjkxxwrvX97TlJ0fhs4Ibl+o5ziqhcza9LFBSRRrcckv+5i8najI56H4YmP0tezOm640luM9/yuB/bG0iGOOqAtRdibNITVqwF+GYmIVcVfSuuQQl6NYSDefGRs13EcSBH1tJyjPs6o9AbOU+emAzPKWuOM+J/BmQ9CRDdWNtkEvwRsxUmKymy7dJ2mWX5ckeTdsJol598019B1S6E5q7vsdYFSyw24mblZtLu3QyLgrqTu8dAAhwgLWck82vKuSQNN1YcZqldh8vcBPoT5xN8c7nZTmYQ9FOighvXV0A/Bbw11v1WGesxjEEppSPsPGk9qtrfQ6hHNqCCwbP3B7ICKhh+a06rw8y+g7m5RGsSp/MaMTimNw/qqwt3S3crS6fkP8iIkCkxk+QCc0U8F+aNhSlmjsY2x4VN7rwDVuOdIhV7fZSEF/y6Oo75o+SZzzS+WBCE+q7SV/y6SryxAZ9l/zrJTDQMNdjKkveMn9JJdSkYg/mS8="
   - secure: "W9QXZjVBNfkI/8WsQ/I+rJPNXUl+FoClcUzF5YHICbkYq1gjgjPjIHYNJ6ks7MkGlT8D6AeYbbsmJ8oMu4ib8frzeRmFNybe4mDSd2+Y2oaM7vHJl96GUdke0D4zTaJ/j26wZyDvTQ+BnAs+wl5vizBbRN6SnGm7ynqmQkOGfqO7Fe9tdPTuNmsH1l/j4E/O0eo7hb1j+PJiX5DfdUmAV/LyycqjP7sncPdPBzkgbSmn0TlHcLLi2H+9WgGcEjmlIpAZ/KwX/maG6uQNiHls7GYGnF6GSJM3DWUKEyYDLSdtbtasM8la8u9fvCoitHntnabBkWXqfKDS6hw8N1fsPY/h74MwR0diA1Lmx7Py+Q22LcweXpNQk+XhofJhyswcoAArRuJxFczJUdFNy8J0jWaQKXYoQgNqkqfAm8fp7RSr6Rsqqxh0vdEgs+aWwnws7+UjuOSvlApcVdTNIm/xqzuQat37G5s5Qsi9IVEOcPylBIhvLkOad+DkSfliRUwjtEmMh4adbg+PTAxbH+uyPwjW+LPxHCxcERgOibcWpDf/45BTl32Hkn5rSN+BRN8zYARZGgg7zC6fj4HgOz+RySVrNvLrQ/fC8erQgdH1O67ThPE1ziekTzgv7bn4Xevk0x6Nb0DaZdVWF5pPYD7MHPSFdW4b3gjvch9s0XM13TU="
+  # End of temporary work around
   - DOCKER_NAMED_CONTAINER=test_extractor   # Used to name the container for easier finding
 
-# Basic information for build
+# Basic setup for the build. Install software needed by all extractors followed by optional installs for specific extractors
 before_install:
+  - echo "Display basic environment"
   - docker --version
   - ls -l
   - echo "Attempting to update to docker-compose version:$DOCKER_COMPOSE_VERSION"
@@ -41,10 +43,13 @@ before_install:
   - ls -l docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
-  - sudo apt install -y libjpeg-dev
-  - sudo apt install -y libtiff-dev
+  # Install common packages
+  - echo "Installing packages"
   - pip install -U pyclowder
   - pip install -U boxsdk
+  # Extractor specific installations
+  - sudo apt install -y libjpeg-dev
+  - sudo apt install -y libtiff-dev
   - pip install -U opencv-python
   - pip install -U numpy
   # Remove next 2 lines when we have Box enabled
@@ -53,11 +58,13 @@ before_install:
 
 # Start up the test bed containers and copy files from other locations as needed
 install:
+  - echo "Starting up environment with docker-compose"
   - docker-compose -p clowder -f test/docker-compose.yml up -d
   - docker ps -a
   - docker inspect clowder_clowder_1
   - ./test/wait_for_clowder.sh
   # Setup the clowder account
+  - echo "Starting Clowder configuration"
   - echo "Clowder URL:$CLOWDER_HOST_URI"
   - curl -X POST -H "Content-Type:application/x-www-form-urlencoded" "$CLOWDER_HOST_URI/signup?email=test%40example.com"
   - ./test/wait_for_registration.sh
@@ -74,45 +81,49 @@ install:
 
 # Setup the clowder environment
 before_script:
+  - echo "Setting up Clowder spaces and datasets"
   - export SPACE_ID=`curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d '{"name":"test_space","description":"Test results"}' "$CLOWDER_HOST_URI/api/spaces?key=$API_KEY" | sed -r 's/.*id\"\:\"(.+)\".*/\1/'`
   - echo "SPACE_ID:$SPACE_ID"
   - export DATASET_ID=`curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d "{\"name\":\"$TEST_DATASET_NAME\"}" "$CLOWDER_HOST_URI/api/datasets/createempty?key=$API_KEY" | sed -r 's/.*id\"\:\"(.+)\".*/\1/'`
   - echo "DATASET ID:$DATASET_ID"
+  - echo "Building and running the extractor to test"
   - docker build -t chrisatua/extractors:test ./
   - docker run --network clowder_clowder -e 'RABBITMQ_URI=amqp://rabbitmq/%2F' -e 'RABBITMQ_EXCHANGE=terra' -d --name=test_extractor $CONTAINER_NAME
   - export EXTRACTOR_NAME=`cat extractor_info.json | grep '\"name\"' | sed -r 's/\"name\"\:.*\"(.+)\",/\1/' | tr -d '[:space:]'`
   - echo "$EXTRACTOR_NAME"
+  - echo "Loading the data for the extractor test"
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
   - ls -l ./data
   - ./test/update_yaml.sh "./data/experiment.yaml" "$SPACE_ID" "test@example.com" "testPassword"
   - cat ./data/experiment.yaml
   - ./test/upload_data.py                     # Put the files into clowder
+  - echo "Registering the extractor and waiting for it to start"
   - ./test/register_extractor.py ./extractor_info.json
   - ./test/wait_for_started.py "$CONTAINER_NAME"
 
 # Start the extraction process and get a result
 script:
+  - echo "Starting the extractors work"
   - docker exec -t clowder_rabbitmq_1 /opt/rabbitmq/escript/rabbitmq-diagnostics list_bindings
   - docker exec -t clowder_rabbitmq_1 /opt/rabbitmq/escript/rabbitmq-diagnostics list_queues
   #- curl -X POST -v -H "accept:application/json" -H "Content-Type:application/json" -d \'{"extractor":"$EXTRACTOR_NAME"}\' "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
   - ./test/start_extract.py "$EXTRACTOR_NAME" "$CLOWDER_HOST_URI/api/datasets/$DATASET_ID/extractions?key=$API_KEY"
   - docker exec -t clowder_rabbitmq_1 /opt/rabbitmq/escript/rabbitmq-diagnostics list_queues
+  - echo "Waiting for extractor to finish and setting up for test result validation"
   - ./test/wait_for_finish.py "$CONTAINER_NAME"
   - ./test/extract_results.py  "$TEST_DATASET_NAME"      # get the results
   - ./test/setup_comparables.sh "$TEST_COMPARE_ARCHIVE"  # setup any comparables
+  - echo "Running the validation of extractor produced data"
   - ls -la
   - ls -la ./datasets
-  - ls -la ./datasets/test_dataset
+  - ls -la "./datasets/$TEST_DATASET_NAME"
   - ls -la ./compare
   - ./test/validate_results.py      # verify the results
 
-after_success:
-  - ls -la
-  - ls -la $HOME
-  - ls -la $HOME/.cache
-  - ls -la $HOME/.cache/pip
+#$after_success:
 
-before_deploy:
+after_success:
+  - echo "Deploying container after successful run"
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push chrisatua/extractors:test
 

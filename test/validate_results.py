@@ -74,8 +74,8 @@ file_ending = "mask.tif"
 master = find_file_match(compare_folder, file_ending)
 source = find_file_match(datasets_folder, file_ending)
 
-print("Master: " + str(master))
-print("Source: " + str(source))
+print("Master image: " + str(master))
+print("Source image: " + str(source))
 
 if master is None:
     raise RuntimeError("Missing the comparison files used to validate results")
@@ -84,9 +84,6 @@ if source is None:
 
 im_mas = cv2.imread(master)
 im_src = cv2.imread(source)
-
-print ("Master image: "+str(im_mas))
-print ("Test image: "+str(im_src))
 
 if im_mas is None:
     print("Master image was not loaded: '" + master + "'")
@@ -119,3 +116,5 @@ if failures_len > 0:
     print("We have " + str(failures_len) + "errors detected")
     errs = ', '.join(str(k) for k in failures.keys())
     raise RuntimeError("Errors found: %s" % errs)
+
+print("Test has run successfully")
