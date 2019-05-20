@@ -18,6 +18,7 @@ branches:
 services:
   - docker
 
+# Only deploy the container after the master branch has built
 stages:
   - name: after_script
     # require the branch name to be master (note for PRs this is the base branch name)
