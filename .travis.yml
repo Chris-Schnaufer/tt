@@ -122,7 +122,7 @@ script:
 
 #$after_success:
 
-after_success:
+deploy:
   - echo "Deploying container after successful run"
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push chrisatua/extractors:test
