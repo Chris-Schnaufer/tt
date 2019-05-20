@@ -13,3 +13,4 @@ tar -xv -f "$1"
 # Remove the tar file copy
 rm "$1"
 
+export MESSAGE_TEST="THis is a test message"
