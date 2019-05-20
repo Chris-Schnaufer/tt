@@ -84,6 +84,7 @@ install:
   - echo "API KEY:$API_KEY"
   # Pull down the testing files
   #- ./test/fetch_box_archives.py "$TEST_COMPARE_ARCHIVE" "$TEST_SOURCE_ARCHIVE"
+  - echo "Branch name:($TRAVIS_PULL_REQUEST_BRANCH) ($TRAVIS_TAG) ($TRAVIS_BUILD_STAGE_NAME)"
 
 # Setup the clowder environment
 before_script:
@@ -99,7 +100,7 @@ before_script:
   - echo "$EXTRACTOR_NAME"
   - echo "Loading the data for the extractor test"
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
-  - echo "Branch name:($TRAVIS_PULL_REQUEST_BRANCH)"
+  - echo "Branch name:($TRAVIS_PULL_REQUEST_BRANCH) ($TRAVIS_TAG) ($TRAVIS_BUILD_STAGE_NAME)"
   - ls -l ./data
   - ./test/update_yaml.sh "./data/experiment.yaml" "$SPACE_ID" "test@example.com" "testPassword"
   - cat ./data/experiment.yaml
