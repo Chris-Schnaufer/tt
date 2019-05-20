@@ -84,7 +84,8 @@ install:
   - echo "API KEY:$API_KEY"
   # Pull down the testing files
   #- ./test/fetch_box_archives.py "$TEST_COMPARE_ARCHIVE" "$TEST_SOURCE_ARCHIVE"
-  - echo "Branch name:($TRAVIS_PULL_REQUEST_BRANCH) ($TRAVIS_TAG) ($TRAVIS_BUILD_STAGE_NAME)"
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
 
 # Setup the clowder environment
 before_script:
