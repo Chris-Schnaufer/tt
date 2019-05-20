@@ -99,7 +99,7 @@ before_script:
   - echo "$EXTRACTOR_NAME"
   - echo "Loading the data for the extractor test"
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
-  - echo "Did nessage work? ($MESSAGE_TEST)"
+  - echo "Branch name:($TRAVIS_PULL_REQUEST_BRANCH)"
   - ls -l ./data
   - ./test/update_yaml.sh "./data/experiment.yaml" "$SPACE_ID" "test@example.com" "testPassword"
   - cat ./data/experiment.yaml
