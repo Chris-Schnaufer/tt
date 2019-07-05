@@ -35,10 +35,12 @@ env:
   - secure: "Pmz+XzLvUDQJzJqMSHuydikR/HLkXs31eVoNhukdLwGjEB8PuIGdBpgtl8xK+W4oGeu9QaU8/0r+XPGY1SwT9hlqwXbM3Uz57aCs6/cbFIbfIx4oQhw9VZxAne3cl3Th4qWoexNp5icwRxrVxzWTRsghMn5xfSWiOLrA+146R/deeQZkHHLfmt8MgjkxxwrvX97TlJ0fhs4Ibl+o5ziqhcza9LFBSRRrcckv+5i8najI56H4YmP0tezOm640luM9/yuB/bG0iGOOqAtRdibNITVqwF+GYmIVcVfSuuQQl6NYSDefGRs13EcSBH1tJyjPs6o9AbOU+emAzPKWuOM+J/BmQ9CRDdWNtkEvwRsxUmKymy7dJ2mWX5ckeTdsJol598019B1S6E5q7vsdYFSyw24mblZtLu3QyLgrqTu8dAAhwgLWck82vKuSQNN1YcZqldh8vcBPoT5xN8c7nZTmYQ9FOighvXV0A/Bbw11v1WGesxjEEppSPsPGk9qtrfQ6hHNqCCwbP3B7ICKhh+a06rw8y+g7m5RGsSp/MaMTimNw/qqwt3S3crS6fkP8iIkCkxk+QCc0U8F+aNhSlmjsY2x4VN7rwDVuOdIhV7fZSEF/y6Oo75o+SZzzS+WBCE+q7SV/y6SryxAZ9l/zrJTDQMNdjKkveMn9JJdSkYg/mS8="
   - secure: "W9QXZjVBNfkI/8WsQ/I+rJPNXUl+FoClcUzF5YHICbkYq1gjgjPjIHYNJ6ks7MkGlT8D6AeYbbsmJ8oMu4ib8frzeRmFNybe4mDSd2+Y2oaM7vHJl96GUdke0D4zTaJ/j26wZyDvTQ+BnAs+wl5vizBbRN6SnGm7ynqmQkOGfqO7Fe9tdPTuNmsH1l/j4E/O0eo7hb1j+PJiX5DfdUmAV/LyycqjP7sncPdPBzkgbSmn0TlHcLLi2H+9WgGcEjmlIpAZ/KwX/maG6uQNiHls7GYGnF6GSJM3DWUKEyYDLSdtbtasM8la8u9fvCoitHntnabBkWXqfKDS6hw8N1fsPY/h74MwR0diA1Lmx7Py+Q22LcweXpNQk+XhofJhyswcoAArRuJxFczJUdFNy8J0jWaQKXYoQgNqkqfAm8fp7RSr6Rsqqxh0vdEgs+aWwnws7+UjuOSvlApcVdTNIm/xqzuQat37G5s5Qsi9IVEOcPylBIhvLkOad+DkSfliRUwjtEmMh4adbg+PTAxbH+uyPwjW+LPxHCxcERgOibcWpDf/45BTl32Hkn5rSN+BRN8zYARZGgg7zC6fj4HgOz+RySVrNvLrQ/fC8erQgdH1O67ThPE1ziekTzgv7bn4Xevk0x6Nb0DaZdVWF5pPYD7MHPSFdW4b3gjvch9s0XM13TU="
   # End of temporary work around
-  - DOCKER_NAMED_CONTAINER=test_extractor   # Used to name the container for easier finding
+  - DOCKER_NAMED_CONTAINER=test_extractor   # Used to name the running container for easier finding
 
 # Basic setup for the build. Install software needed by all extractors followed by optional installs for specific extractors
 before_install:
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - 
   - echo "Display basic environment"
   - docker --version
   - ls -l
@@ -84,8 +86,6 @@ install:
   - echo "API KEY:$API_KEY"
   # Pull down the testing files
   #- ./test/fetch_box_archives.py "$TEST_COMPARE_ARCHIVE" "$TEST_SOURCE_ARCHIVE"
-  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
 
 # Setup the clowder environment
 before_script:
@@ -101,7 +101,6 @@ before_script:
   - echo "$EXTRACTOR_NAME"
   - echo "Loading the data for the extractor test"
   - ./test/extract.sh "$TEST_SOURCE_ARCHIVE"  # Uncompress the test files
-  - echo "Branch name:($TRAVIS_PULL_REQUEST_BRANCH) ($TRAVIS_TAG) ($TRAVIS_BUILD_STAGE_NAME)"
   - ls -l ./data
   - ./test/update_yaml.sh "./data/experiment.yaml" "$SPACE_ID" "test@example.com" "testPassword"
   - cat ./data/experiment.yaml
